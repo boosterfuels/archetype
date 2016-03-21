@@ -1,0 +1,28 @@
+{
+  "name": "monoschema",
+  "version": "0.0.1",
+  "author": "Valeri Karpov <val@boosterfuels.com>",
+  "dependencies": {
+    "debug": "2.2.0",
+    "lodash": "4.6.1"
+  },
+  "devDependencies": {
+    "acquit": "0.4.0",
+    "acquit-ignore": "0.0.3",
+    "acquit-markdown": "0.0.2",
+    "co": "4.6.0",
+    "gulp": "3.8.11",
+    "gulp-mocha": "2.0.1",
+    "istanbul": "0.3.17",
+    "mocha": "2.2.4"
+  },
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "license": "Apache 2.0",
+  "scripts": {
+    "coverage": "istanbul cover _mocha -- test/*.test.js",
+    "docs": "node docs.js",
+    "test": "mocha test/*.test.js"
+  }
+}
