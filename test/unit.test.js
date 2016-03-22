@@ -36,7 +36,7 @@ describe('schema', function() {
     assert.deepEqual(schema._paths, {
       'test': { $type: Number },
       'arrMixed': { $type: Array },
-      'arrMixed.$': { $type: Object },
+      'arrMixed.$': { $type: Schema.Any },
       'arrPlain': { $type: Array },
       'arrPlain.$': { $type: Number },
       'arrNested': { $type: Array },

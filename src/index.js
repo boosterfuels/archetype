@@ -1,5 +1,6 @@
 'use strict';
 
+const Any = require('./any');
 const _ = require('lodash');
 
 class Schema {
@@ -22,7 +23,7 @@ class Schema {
 
   paths() {
     return _.map(Object.keys(this._paths),
-      path => { key: path, value: this[path] });
+      path => ({ key: path, value: this[path] }));
   }
 }
 
@@ -44,7 +45,7 @@ function visitArray(arr, path, paths) {
       paths[path + '.$'] = { $type: arr[0] };
     }
   } else {
-    paths[path + '.$'] = { $type: Object }
+    paths[path + '.$'] = { $type: Any };
   }
   return paths[path];
 }
@@ -76,5 +77,7 @@ function join(path, key) {
   }
   return key;
 }
+
+Schema.Any = Any;
 
 module.exports = Schema;
