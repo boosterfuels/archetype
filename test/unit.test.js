@@ -1,11 +1,12 @@
 'use strict';
 
-let assert = require('assert');
-let Schema = require('../src');
+const assert = require('assert');
+const mongodb = require('mongodb');
+const monoschema = require('../');
 
 describe('schema', function() {
   it('compiles paths', function() {
-    let schema = new Schema({
+    let schema = new monoschema.Schema({
       test: Number,
       nested: {
         a: {
@@ -24,7 +25,7 @@ describe('schema', function() {
   });
 
   it('handles arrays', function() {
-    let schema = new Schema({
+    let schema = new monoschema.Schema({
       test: Number,
       arrMixed: [],
       arrPlain: [Number],
@@ -36,7 +37,7 @@ describe('schema', function() {
     assert.deepEqual(schema._paths, {
       'test': { $type: Number },
       'arrMixed': { $type: Array },
-      'arrMixed.$': { $type: Schema.Any },
+      'arrMixed.$': { $type: monoschema.Any },
       'arrPlain': { $type: Array },
       'arrPlain.$': { $type: Number },
       'arrNested': { $type: Array },
@@ -46,7 +47,7 @@ describe('schema', function() {
   });
 
   it('handles nested document arrays', function() {
-    let schema = new Schema({
+    let schema = new monoschema.Schema({
       docs: [{ _id: Number }]
     });
 
@@ -60,7 +61,7 @@ describe('schema', function() {
   });
 
   it('treats keys that start with $ as a terminus', function() {
-    let schema = new Schema({
+    let schema = new monoschema.Schema({
       test: {
         $prop: 1
       }
@@ -74,12 +75,121 @@ describe('schema', function() {
   });
 
   it('adding paths with .path()', function() {
-    let schema = new Schema({
+    let schema = new monoschema.Schema({
       docs: [{ _id: Number }]
     });
 
     assert.ok(!schema.path('_id'));
     schema.path('_id', { $type: Number });
     assert.deepEqual(schema.path('_id'), { $type: Number });
+  });
+});
+
+describe('validate', function() {
+  it('ignores paths not defined in the schema', function() {
+    const schema = new monoschema.Schema({
+      name: { $type: String }
+    });
+
+    const axl = { name: 'Axl Rose', role: 'Lead Singer' };
+    assert.ifError(monoschema.cast(axl, schema));
+  });
+
+  it('casts values to specified types', function() {
+    const schema = new monoschema.Schema({
+      _id: { $type: mongodb.ObjectId },
+      name: { $type: String },
+      born: { $type: Number }
+    });
+
+    const axl = {
+      _id: '000000000000000000000001',
+      name: 'Axl Rose',
+      born: '1962'
+    };
+
+    assert.ifError(monoschema.cast(axl, schema));
+
+    assert.deepEqual(axl, {
+      _id: mongodb.ObjectId('000000000000000000000001'),
+      name: 'Axl Rose',
+      born: 1962
+    });
+  });
+
+  it('casts into arrays', function() {
+    let schema = new monoschema.Schema({
+      members: [{ $type: mongodb.ObjectId }]
+    });
+
+    const band = {
+      members: '000000000000000000000001'
+    };
+
+    assert.ifError(monoschema.cast(band, schema));
+
+    assert.deepEqual(band, {
+      members: [mongodb.ObjectId('000000000000000000000001')]
+    });
+  });
+
+  it('casts deeply nested arrays', function() {
+    const schema = new monoschema.Schema({
+      points: [[{ $type: Number }]]
+    });
+
+    const obj = { points: 1 };
+    assert.ifError(monoschema.cast(obj, schema));
+
+    assert.deepEqual(obj, {
+      points: [[1]]
+    });
+  });
+
+  it('error if you cast an object to a primitive', function() {
+    const schema = new monoschema.Schema({
+      name: {
+        first: { $type: String },
+        last: { $type: String }
+      }
+    });
+
+    let user = { name: 'Axl Rose' };
+    assert.deepEqual(monoschema.cast(user, schema).errors, {
+      name: new Error("Error: Could not cast 'Axl Rose' to Object")
+    });
+  });
+
+  it('ignores if $type not specified', function() {
+    const schema = new monoschema.Schema({
+      members: { $lookUp: { ref: 'Test' } },
+      tags: { $type: Array }
+    });
+
+    const band = { members: { x: 1 } };
+    assert.ifError(monoschema.cast(band, schema));
+  });
+
+  it('array of objects to primitive', function() {
+    const schema = new monoschema.Schema({
+      names: [{
+        first: { $type: String },
+        last: { $type: String }
+      }]
+    });
+
+    const user = { names: ['Axl Rose'] };
+    assert.deepEqual(monoschema.cast(user, schema).errors, {
+      'names.0': new Error("Error: Could not cast 'Axl Rose' to Object")
+    });
+  });
+
+  it('required', function() {
+    const schema = new monoschema.Schema({
+      name: { $type: String, $required: true }
+    });
+    assert.deepEqual(monoschema.cast({}, schema).errors, {
+      name: new Error('Path "name" is required')
+    });
   });
 });

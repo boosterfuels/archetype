@@ -4,7 +4,8 @@
   "author": "Valeri Karpov <val@boosterfuels.com>",
   "dependencies": {
     "debug": "2.2.0",
-    "lodash": "4.6.1"
+    "lodash": "4.6.1",
+    "mpath": "0.2.1"
   },
   "devDependencies": {
     "acquit": "0.4.0",
@@ -13,14 +14,15 @@
     "co": "4.6.0",
     "gulp": "3.8.11",
     "gulp-mocha": "2.0.1",
-    "istanbul": "0.3.17",
-    "mocha": "2.2.4"
+    "istanbul": "0.4.2",
+    "mocha": "2.2.4",
+    "mongodb": "2.1.10"
   },
   "engines": {
     "node": ">= 4.0.0"
   },
   "license": "Apache 2.0",
-  "main": "./src/index.js",
+  "main": "./index.js",
   "scripts": {
     "coverage": "istanbul cover _mocha -- test/*.test.js",
     "docs": "node docs.js",

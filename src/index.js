@@ -7,10 +7,15 @@ class Schema {
   constructor(obj) {
     this._obj = _.cloneDeep(obj);
     this._paths = {};
+    this.compile();
   }
 
   compile() {
     this._paths = visitor(this._obj);
+  }
+
+  json() {
+    return this._obj;
   }
 
   path(path, props) {
@@ -80,4 +85,5 @@ function join(path, key) {
 
 Schema.Any = Any;
 
-module.exports = Schema;
+exports.Any = Any;
+exports.Schema = Schema;
