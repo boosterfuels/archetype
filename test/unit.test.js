@@ -156,15 +156,16 @@ describe('unmarshal()', function() {
     });
 
     let user = { name: 'Axl Rose' };
-
+    let errored = false;
     try {
       schema.unmarshal(user);
-      throw new Error(`Should have errored!`);
     } catch(error) {
+      errored = true;
       assert.deepEqual(error.errors, {
         name: new Error("Error: Could not cast 'Axl Rose' to Object")
       });
     }
+    assert.ok(errored);
   });
 
   it('ignores if $type not specified', function() {
@@ -187,14 +188,16 @@ describe('unmarshal()', function() {
     });
 
     const user = { names: ['Axl Rose'] };
+    let errored = false;
     try {
       schema.unmarshal(user);
-      throw new Error(`Should have errored!`);
     } catch(error) {
+      errored = true;
       assert.deepEqual(error.errors, {
         'names.0': new Error("Error: Could not cast 'Axl Rose' to Object")
       });
     }
+    assert.ok(errored);
   });
 
   it('required', function() {
@@ -202,13 +205,15 @@ describe('unmarshal()', function() {
       name: { $type: String, $required: true }
     });
 
+    let errored = false;
     try {
       schema.unmarshal({});
-      throw new Error('Should have errored!');
     } catch(error) {
+      errored = true;
       assert.deepEqual(error.errors, {
         name: new Error('Path "name" is required')
       });
     }
+    assert.ok(errored);
   });
 });
