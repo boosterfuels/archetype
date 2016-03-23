@@ -12,10 +12,14 @@ const realPathToSchemaPath = require('./util').realPathToSchemaPath;
 module.exports = castDocument;
 
 function castDocument(obj, schema) {
+  obj = _.cloneDeep(obj);
   const error = new ValidateError();
   error.merge(visitObject(obj, schema, '').error);
   error.merge(checkRequired(obj, schema));
-  return error.hasError ? error : null;
+  if (error.hasError) {
+    throw error;
+  }
+  return obj;
 }
 
 function visitArray(arr, schema, path) {
