@@ -85,14 +85,15 @@ describe('schema', function() {
   });
 });
 
-describe('validate', function() {
+describe('unmarshal()', function() {
   it('ignores paths not defined in the schema', function() {
     const schema = new monoschema.Schema({
       name: { $type: String }
     });
 
     const axl = { name: 'Axl Rose', role: 'Lead Singer' };
-    assert.ifError(monoschema.cast(axl, schema));
+    assert.ifError(monoschema.unmarshal(axl, schema));
+    assert.deepEqual(axl, { name: 'Axl Rose' });
   });
 
   it('casts values to specified types', function() {
@@ -108,7 +109,7 @@ describe('validate', function() {
       born: '1962'
     };
 
-    assert.ifError(monoschema.cast(axl, schema));
+    assert.ifError(monoschema.unmarshal(axl, schema));
 
     assert.deepEqual(axl, {
       _id: mongodb.ObjectId('000000000000000000000001'),
@@ -126,7 +127,7 @@ describe('validate', function() {
       members: '000000000000000000000001'
     };
 
-    assert.ifError(monoschema.cast(band, schema));
+    assert.ifError(monoschema.unmarshal(band, schema));
 
     assert.deepEqual(band, {
       members: [mongodb.ObjectId('000000000000000000000001')]
@@ -139,7 +140,7 @@ describe('validate', function() {
     });
 
     const obj = { points: 1 };
-    assert.ifError(monoschema.cast(obj, schema));
+    assert.ifError(monoschema.unmarshal(obj, schema));
 
     assert.deepEqual(obj, {
       points: [[1]]
@@ -155,7 +156,7 @@ describe('validate', function() {
     });
 
     let user = { name: 'Axl Rose' };
-    assert.deepEqual(monoschema.cast(user, schema).errors, {
+    assert.deepEqual(monoschema.unmarshal(user, schema).errors, {
       name: new Error("Error: Could not cast 'Axl Rose' to Object")
     });
   });
@@ -167,7 +168,7 @@ describe('validate', function() {
     });
 
     const band = { members: { x: 1 } };
-    assert.ifError(monoschema.cast(band, schema));
+    assert.ifError(monoschema.unmarshal(band, schema));
   });
 
   it('array of objects to primitive', function() {
@@ -179,7 +180,7 @@ describe('validate', function() {
     });
 
     const user = { names: ['Axl Rose'] };
-    assert.deepEqual(monoschema.cast(user, schema).errors, {
+    assert.deepEqual(monoschema.unmarshal(user, schema).errors, {
       'names.0': new Error("Error: Could not cast 'Axl Rose' to Object")
     });
   });
@@ -188,7 +189,7 @@ describe('validate', function() {
     const schema = new monoschema.Schema({
       name: { $type: String, $required: true }
     });
-    assert.deepEqual(monoschema.cast({}, schema).errors, {
+    assert.deepEqual(monoschema.unmarshal({}, schema).errors, {
       name: new Error('Path "name" is required')
     });
   });
