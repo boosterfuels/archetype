@@ -142,10 +142,10 @@ function checkRequired(obj, schema) {
     const val = mpath.get(_path, obj);
     if (Array.isArray(val)) {
       if (!_.any(val, v => !v)) {
-        error.markError(path, new Error(`Path ${path} is required`));
+        error.markError(path, new Error(`Path "${path}" is required`));
       }
     } else if (!val) {
-      error.markError(path, new Error(`Path ${path} is required`));
+      error.markError(path, new Error(`Path "${path}" is required`));
     }
   });
   return error;

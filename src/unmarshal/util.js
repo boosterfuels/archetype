@@ -1,22 +1,25 @@
 'use strict';
 
 let SPECIAL_CASES = new WeakMap();
-SPECIAL_CASES.set(Number, function(v) {
-  let casted = Number(v);
-  if (isNaN(casted)) {
-    throw new Error('Could not cast ' + require('util').inspect(v) +
-      ' to Number');
-  }
-  return casted;
-});
+SPECIAL_CASES.
+  set(Number, function(v) {
+    let casted = Number(v);
+    if (isNaN(casted)) {
+      throw new Error('Could not cast ' + require('util').inspect(v) +
+        ' to Number');
+    }
+    return casted;
+  }).
+  set(String, String);
 
 exports.handleCast = function(obj, key, type) {
+  if (SPECIAL_CASES.has(type)) {
+    obj[key] = SPECIAL_CASES.get(type)(obj[key]);
+    return;
+  }
+
   if (!(obj[key] instanceof type)) {
-    if (SPECIAL_CASES.has(type)) {
-      obj[key] = SPECIAL_CASES.get(type)(obj[key]);
-    } else {
-      obj[key] = type(obj[key]);
-    }
+    obj[key] = new type(obj[key]);
   }
 };
 
