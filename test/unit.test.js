@@ -92,7 +92,7 @@ describe('unmarshal()', function() {
     });
 
     const axl = { name: 'Axl Rose', role: 'Lead Singer' };
-    assert.ifError(monoschema.unmarshal(axl, schema));
+    assert.ifError(schema.unmarshal(axl));
     assert.deepEqual(axl, { name: 'Axl Rose' });
   });
 
@@ -109,7 +109,7 @@ describe('unmarshal()', function() {
       born: '1962'
     };
 
-    assert.ifError(monoschema.unmarshal(axl, schema));
+    assert.ifError(schema.unmarshal(axl));
 
     assert.deepEqual(axl, {
       _id: mongodb.ObjectId('000000000000000000000001'),
@@ -127,7 +127,7 @@ describe('unmarshal()', function() {
       members: '000000000000000000000001'
     };
 
-    assert.ifError(monoschema.unmarshal(band, schema));
+    assert.ifError(schema.unmarshal(band));
 
     assert.deepEqual(band, {
       members: [mongodb.ObjectId('000000000000000000000001')]
@@ -140,7 +140,7 @@ describe('unmarshal()', function() {
     });
 
     const obj = { points: 1 };
-    assert.ifError(monoschema.unmarshal(obj, schema));
+    assert.ifError(schema.unmarshal(obj));
 
     assert.deepEqual(obj, {
       points: [[1]]
@@ -156,7 +156,7 @@ describe('unmarshal()', function() {
     });
 
     let user = { name: 'Axl Rose' };
-    assert.deepEqual(monoschema.unmarshal(user, schema).errors, {
+    assert.deepEqual(schema.unmarshal(user).errors, {
       name: new Error("Error: Could not cast 'Axl Rose' to Object")
     });
   });
@@ -168,7 +168,7 @@ describe('unmarshal()', function() {
     });
 
     const band = { members: { x: 1 } };
-    assert.ifError(monoschema.unmarshal(band, schema));
+    assert.ifError(schema.unmarshal(band));
   });
 
   it('array of objects to primitive', function() {
@@ -180,7 +180,7 @@ describe('unmarshal()', function() {
     });
 
     const user = { names: ['Axl Rose'] };
-    assert.deepEqual(monoschema.unmarshal(user, schema).errors, {
+    assert.deepEqual(schema.unmarshal(user).errors, {
       'names.0': new Error("Error: Could not cast 'Axl Rose' to Object")
     });
   });
@@ -189,7 +189,7 @@ describe('unmarshal()', function() {
     const schema = new monoschema.Schema({
       name: { $type: String, $required: true }
     });
-    assert.deepEqual(monoschema.unmarshal({}, schema).errors, {
+    assert.deepEqual(schema.unmarshal({}).errors, {
       name: new Error('Path "name" is required')
     });
   });

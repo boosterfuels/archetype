@@ -2,6 +2,7 @@
 
 const Any = require('./any');
 const _ = require('lodash');
+const unmarshal = require('./unmarshal');
 
 class Schema {
   constructor(obj) {
@@ -29,6 +30,10 @@ class Schema {
   paths() {
     return _.map(Object.keys(this._paths),
       path => ({ key: path, value: this[path] }));
+  }
+
+  unmarshal(obj) {
+    return unmarshal(obj, this);
   }
 }
 
