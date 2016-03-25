@@ -200,6 +200,18 @@ describe('unmarshal()', function() {
     assert.ok(errored);
   });
 
+  it('array of objects', function() {
+    const schema = new monoschema.Schema({
+      people: [{name: { $type: String, $required: true } }]
+    });
+
+    const v = { people: [{ name: 'Axl Rose', other: 'field' }] };
+    const res = schema.unmarshal(v);
+    assert.deepEqual(res, {
+      people: [{ name: 'Axl Rose' }]
+    });
+  });
+
   it('required', function() {
     const schema = new monoschema.Schema({
       name: { $type: String, $required: true }

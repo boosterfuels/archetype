@@ -84,9 +84,11 @@ function visitObject(obj, schema, path) {
   }
 
   let fakePath = realPathToSchemaPath(path);
+  debug('fakePath', fakePath);
 
   _.each(obj, function(value, key) {
-    let newPath = join(path, key);
+    let newPath = join(fakePath, key);
+    debug('visit', key);
     if (!schema._paths[newPath]) {
       delete obj[key];
       return;
@@ -145,7 +147,7 @@ function checkRequired(obj, schema) {
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
     const val = mpath.get(_path, obj);
     if (Array.isArray(val)) {
-      if (!_.some(val, v => !v)) {
+      if (_.some(val, v => !v)) {
         error.markError(path, new Error(`Path "${path}" is required`));
       }
     } else if (!val) {
