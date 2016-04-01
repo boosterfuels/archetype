@@ -228,4 +228,14 @@ describe('unmarshal()', function() {
     }
     assert.ok(errored);
   });
+
+  it('default', function() {
+    const schema = new monoschema.Schema({
+      name: { $type: String, $required: true, $default: 'bacon' },
+      names: [{ $type: String, $required: true, $default: 'eggs' }]
+    });
+
+    const val = schema.unmarshal({ names: [null] });
+    assert.deepEqual(val, { name: 'bacon', names: ['eggs'] });
+  });
 });

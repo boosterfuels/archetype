@@ -13,6 +13,7 @@ module.exports = castDocument;
 
 function castDocument(obj, schema) {
   obj = _.cloneDeep(obj);
+  applyDefaults(obj, schema);
   const error = new ValidateError();
   error.merge(visitObject(obj, schema, '').error);
   error.merge(checkRequired(obj, schema));
@@ -155,4 +156,24 @@ function checkRequired(obj, schema) {
     }
   });
   return error;
+}
+
+function applyDefaults(obj, schema) {
+  _.each(Object.keys(schema._paths), path => {
+    if (!schema._paths[path].$default) {
+      return;
+    }
+    const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
+    const val = mpath.get(_path, obj);
+    if (Array.isArray(val)) {
+      for (let i = 0; i < val.length; ++i) {
+        if (!val[i]) {
+          val[i] = schema._paths[path].$default;
+        }
+      }
+      mpath.set(_path, val, obj);
+    } else if (!val) {
+      mpath.set(_path, schema._paths[path].$default, obj);
+    }
+  });
 }
