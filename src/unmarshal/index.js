@@ -173,7 +173,7 @@ function applyDefaults(obj, schema) {
       }
       mpath.set(_path, val, obj);
     } else if (!val) {
-      mpath.set(_path, handleDefault(schema._paths[path].$default, obj));
+      mpath.set(_path, handleDefault(schema._paths[path].$default), obj);
     }
   });
 }
