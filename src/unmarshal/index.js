@@ -183,6 +183,4 @@ function handleDefault(obj) {
     return obj(); 
   }
   return obj;
-  } 
-}
 }
