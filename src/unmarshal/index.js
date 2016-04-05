@@ -148,10 +148,10 @@ function checkRequired(obj, schema) {
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
     const val = mpath.get(_path, obj);
     if (Array.isArray(val)) {
-      if (_.some(val, v => !v)) {
+      if (_.some(val, v => v == null)) {
         error.markError(path, new Error(`Path "${path}" is required`));
       }
-    } else if (!val) {
+    } else if (val == null) {
       error.markError(path, new Error(`Path "${path}" is required`));
     }
   });
@@ -180,7 +180,7 @@ function applyDefaults(obj, schema) {
 
 function handleDefault(obj) {
   if (typeof obj === 'function') {
-    return obj(); 
+    return obj();
   }
   return obj;
 }
