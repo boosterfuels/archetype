@@ -168,12 +168,21 @@ function applyDefaults(obj, schema) {
     if (Array.isArray(val)) {
       for (let i = 0; i < val.length; ++i) {
         if (!val[i]) {
-          val[i] = schema._paths[path].$default;
+          val[i] = handleDefault(schema._paths[path].$default);
         }
       }
       mpath.set(_path, val, obj);
     } else if (!val) {
-      mpath.set(_path, schema._paths[path].$default, obj);
+      mpath.set(_path, handleDefault(schema._paths[path].$default, obj));
     }
   });
+}
+
+function handleDefault(obj) {
+  if (typeof obj === 'function') {
+    return obj(); 
+  }
+  return obj;
+  } 
+}
 }
