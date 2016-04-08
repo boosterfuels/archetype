@@ -32,8 +32,8 @@ class Schema {
       path => ({ key: path, value: this[path] }));
   }
 
-  unmarshal(obj) {
-    return unmarshal(obj, this);
+  unmarshal(obj, projection) {
+    return unmarshal(obj, this, projection);
   }
 }
 

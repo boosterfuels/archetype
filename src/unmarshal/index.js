@@ -11,19 +11,66 @@ const realPathToSchemaPath = require('./util').realPathToSchemaPath;
 
 module.exports = castDocument;
 
-function castDocument(obj, schema) {
+function markSubpaths(projection, path, val) {
+  const pieces = path.split('.');
+  let cur = pieces[0];
+  projection[cur] = val;
+  for (let i = 1; i < pieces.length; ++i) {
+    cur += `.${pieces[i]}`;
+    projection[cur] = val;
+  }
+}
+
+function handleProjection(projection) {
+  if (!projection) {
+    return { $inclusive: true };
+  }
+  projection = _.cloneDeep(projection);
+  let inclusive = null;
+  for (const key of Object.keys(projection)) {
+    if (projection[key] > 0) {
+      if (inclusive === true) {
+        throw new Error("Can't mix inclusive and exclusive in projection");
+      }
+      markSubpaths(projection, key, projection[key]);
+      inclusive = false;
+    } else {
+      if (inclusive === false) {
+        throw new Error("Can't mix inclusive and exclusive in projection");
+      }
+      inclusive = true;
+    }
+  }
+
+  if (inclusive === null) {
+    inclusive = true;
+  }
+  projection.$inclusive = inclusive;
+  return projection;
+}
+
+function shouldSkipPath(projection, path) {
+  if (projection.$inclusive) {
+    return projection[path] != null;
+  } else {
+    return projection[path] == null;
+  }
+}
+
+function castDocument(obj, schema, projection) {
+  projection = handleProjection(projection);
   obj = _.cloneDeep(obj);
-  applyDefaults(obj, schema);
+  applyDefaults(obj, schema, projection);
   const error = new ValidateError();
-  error.merge(visitObject(obj, schema, '').error);
-  error.merge(checkRequired(obj, schema));
+  error.merge(visitObject(obj, schema, projection, '').error);
+  error.merge(checkRequired(obj, schema, projection));
   if (error.hasError) {
     throw error;
   }
   return obj;
 }
 
-function visitArray(arr, schema, path) {
+function visitArray(arr, schema, projection, path) {
   debug('visitArray', arr, path, schema);
   let error = new ValidateError();
   let curPath = realPathToSchemaPath(path);
@@ -43,14 +90,14 @@ function visitArray(arr, schema, path) {
   debug('newPath', newPath, schema._paths[newPath].$type);
   arr.forEach(function(value, index) {
     if (schema._paths[newPath].$type === Array) {
-      let res = visitArray(value, schema, join(path, index, true));
+      let res = visitArray(value, schema, projection, join(path, index, true));
       if (res.error) {
         error.merge(res.error);
       }
       arr[index] = res.value;
       return;
     } else if (schema._paths[newPath].$type === Object) {
-      let res = visitObject(value, schema, join(path, index, true));
+      let res = visitObject(value, schema, projection, join(path, index, true));
       if (res.error) {
         error.merge(res.error);
       }
@@ -71,8 +118,8 @@ function visitArray(arr, schema, path) {
   };
 }
 
-function visitObject(obj, schema, path) {
-  debug('visitObject', obj, schema, path);
+function visitObject(obj, schema, projection, path) {
+  debug('visitObject', obj, schema, projection, path);
   let error = new ValidateError();
   if (typeof obj !== 'object' || Array.isArray(obj)) {
     let err = new Error('Could not cast ' + require('util').inspect(obj) +
@@ -90,7 +137,7 @@ function visitObject(obj, schema, path) {
   _.each(obj, function(value, key) {
     let newPath = join(fakePath, key);
     debug('visit', key);
-    if (!schema._paths[newPath]) {
+    if (!schema._paths[newPath] || shouldSkipPath(projection, newPath)) {
       delete obj[key];
       return;
     }
@@ -100,7 +147,7 @@ function visitObject(obj, schema, path) {
     }
 
     if (schema._paths[newPath].$type === Array) {
-      let res = visitArray(value, schema, newPath);
+      let res = visitArray(value, schema, projection, newPath);
       if (res.error) {
         debug('merge', res.error.errors);
         error.merge(res.error);
@@ -112,7 +159,7 @@ function visitObject(obj, schema, path) {
         delete obj[key];
         return;
       }
-      let res = visitObject(value, schema, newPath);
+      let res = visitObject(value, schema, projection, newPath);
       if (res.error) {
         debug('merge', res.error.errors);
         error.merge(res.error);
@@ -139,9 +186,12 @@ function handleTerminus(value, key, schema, path) {
   handleCast(value, key, schema.$type);
 }
 
-function checkRequired(obj, schema) {
+function checkRequired(obj, schema, projection) {
   const error = new ValidateError();
   _.each(Object.keys(schema._paths), path => {
+    if (shouldSkipPath(projection, path)) {
+      return;
+    }
     if (!schema._paths[path].$required) {
       return true;
     }
@@ -158,9 +208,12 @@ function checkRequired(obj, schema) {
   return error;
 }
 
-function applyDefaults(obj, schema) {
+function applyDefaults(obj, schema, projection) {
   _.each(Object.keys(schema._paths), path => {
     if (!schema._paths[path].$default) {
+      return;
+    }
+    if (shouldSkipPath(projection, path)) {
       return;
     }
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');

@@ -238,4 +238,19 @@ describe('unmarshal()', function() {
     const val = schema.unmarshal({ names: [null] });
     assert.deepEqual(val, { name: 'bacon', names: ['eggs'] });
   });
+
+  it('projections', function() {
+    const schema = new monoschema.Schema({
+      name: {
+        first: { $type: String },
+        last: { $type: String }
+      }
+    });
+
+    const user = { name: { first: 'Axl', last: 'Rose' } };
+    const justFirst = schema.unmarshal(user, { 'name.first': 1 });
+    assert.deepEqual(justFirst, { name: { first: 'Axl' } });
+    const justLast = schema.unmarshal(user, { 'name.first': 0 });
+    assert.deepEqual(justLast, { name: { last: 'Rose' } });
+  });
 });
