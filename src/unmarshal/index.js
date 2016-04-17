@@ -64,6 +64,7 @@ function castDocument(obj, schema, projection) {
   const error = new ValidateError();
   error.merge(visitObject(obj, schema, projection, '').error);
   error.merge(checkRequired(obj, schema, projection));
+  error.merge(runValidation(obj, schema, projection));
   if (error.hasError) {
     throw error;
   }
@@ -203,6 +204,39 @@ function checkRequired(obj, schema, projection) {
       }
     } else if (val == null) {
       error.markError(path, new Error(`Path "${path}" is required`));
+    }
+  });
+  return error;
+}
+
+function runValidation(obj, schema, projection) {
+  const error = new ValidateError();
+  _.each(Object.keys(schema._paths), path => {
+    if (shouldSkipPath(projection, path)) {
+      return;
+    }
+    if (!schema._paths[path].$validate) {
+      return true;
+    }
+    const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
+    const val = mpath.get(_path, obj);
+    if (val == null) {
+      return;
+    }
+    if (Array.isArray(val)) {
+      _.each(val, (val, index) => {
+        try {
+          schema._paths[path].$validate(val, obj);
+        } catch(_error) {
+          error.markError(`${path}.${index}`, _error);
+        }
+      });
+    } else {
+      try {
+        schema._paths[path].$validate(val, obj);
+      } catch(_error) {
+        error.markError(path, _error);
+      }
     }
   });
   return error;

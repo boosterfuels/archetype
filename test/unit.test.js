@@ -253,4 +253,22 @@ describe('unmarshal()', function() {
     const justLast = schema.unmarshal(user, { 'name.first': 0 });
     assert.deepEqual(justLast, { name: { last: 'Rose' } });
   });
+
+  it('validation', function() {
+    const breakfastSchema = new monoschema.Schema({
+      bacon: {
+        $type: Number,
+        $required: true,
+        $validate: v => {
+          if (v < 3) {
+            throw new Error('Need more bacon');
+          }
+        }
+      }
+    });
+
+    assert.throws(function() {
+      breakfastSchema.unmarshal({ bacon: 2 });
+    }, /Need more bacon/);
+  });
 });
