@@ -226,14 +226,14 @@ function runValidation(obj, schema, projection) {
     if (Array.isArray(val)) {
       _.each(val, (val, index) => {
         try {
-          schema._paths[path].$validate(val, obj);
+          schema._paths[path].$validate(val, schema._paths[path], obj);
         } catch(_error) {
           error.markError(`${path}.${index}`, _error);
         }
       });
     } else {
       try {
-        schema._paths[path].$validate(val, obj);
+        schema._paths[path].$validate(val, schema._paths[path], obj);
       } catch(_error) {
         error.markError(path, _error);
       }
