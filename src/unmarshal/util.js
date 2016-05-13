@@ -12,15 +12,19 @@ SPECIAL_CASES.
   }).
   set(String, String);
 
-exports.handleCast = function(obj, key, type) {
+exports.to = function(v, type) {
   if (SPECIAL_CASES.has(type)) {
-    obj[key] = SPECIAL_CASES.get(type)(obj[key]);
-    return;
+    return SPECIAL_CASES.get(type)(v);
   }
 
-  if (!(obj[key] instanceof type)) {
-    obj[key] = new type(obj[key]);
+  if (!(v instanceof type)) {
+    return new type(v);
   }
+  return v;
+}
+
+exports.handleCast = function(obj, key, type) {
+  obj[key] = exports.to(obj[key], type);
 };
 
 exports.realPathToSchemaPath = function(path) {
