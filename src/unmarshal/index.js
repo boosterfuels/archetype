@@ -259,7 +259,7 @@ function applyDefaults(obj, schema, projection) {
         }
       }
       mpath.set(_path, val, obj);
-    } else if (!val) {
+    } else if (val == null) {
       mpath.set(_path, handleDefault(schema._paths[path].$default), obj);
     }
   });
