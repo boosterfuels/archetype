@@ -10,7 +10,13 @@ SPECIAL_CASES.
     }
     return casted;
   }).
-  set(String, String);
+  set(String, String).
+  set(Boolean, function(v) {
+    if (typeof v === 'boolean') {
+      return v;
+    }
+    return Boolean(v).valueOf();
+  });
 
 exports.to = function(v, type) {
   if (SPECIAL_CASES.has(type)) {
