@@ -77,7 +77,7 @@ describe('schema', function() {
   it('adding paths with .path()', function() {
     let schema = new archetype.Schema({
       docs: [{ _id: Number }]
-    });
+    }).compile();
 
     assert.ok(!schema.path('_id'));
     schema.path('_id', { $type: Number });
@@ -101,7 +101,7 @@ describe('unmarshal()', function() {
       _id: { $type: mongodb.ObjectId },
       name: { $type: String },
       born: { $type: Number }
-    });
+    }).compile();
 
     const axl = {
       _id: '000000000000000000000001',
@@ -121,7 +121,7 @@ describe('unmarshal()', function() {
   it('casts into arrays', function() {
     let schema = new archetype.Schema({
       members: [{ $type: mongodb.ObjectId }]
-    });
+    }).compile();
 
     const band = {
       members: '000000000000000000000001'
@@ -137,7 +137,7 @@ describe('unmarshal()', function() {
   it('casts deeply nested arrays', function() {
     const schema = new archetype.Schema({
       points: [[{ $type: Number }]]
-    });
+    }).compile();
 
     const obj = { points: 1 };
     const res = schema.unmarshal(obj);
@@ -153,7 +153,7 @@ describe('unmarshal()', function() {
         first: { $type: String },
         last: { $type: String }
       }
-    });
+    }).compile();
 
     let user = { name: 'Axl Rose' };
     let errored = false;
@@ -172,7 +172,7 @@ describe('unmarshal()', function() {
     const schema = new archetype.Schema({
       members: { $lookUp: { ref: 'Test' } },
       tags: { $type: Array }
-    });
+    }).compile();
 
     const band = { members: { x: 1 } };
     const res = schema.unmarshal(band);
@@ -185,7 +185,7 @@ describe('unmarshal()', function() {
         first: { $type: String },
         last: { $type: String }
       }]
-    });
+    }).compile();
 
     const user = { names: ['Axl Rose'] };
     let errored = false;
@@ -203,7 +203,7 @@ describe('unmarshal()', function() {
   it('array of objects', function() {
     const schema = new archetype.Schema({
       people: [{name: { $type: String, $required: true } }]
-    });
+    }).compile();
 
     const v = { people: [{ name: 'Axl Rose', other: 'field' }] };
     const res = schema.unmarshal(v);
@@ -215,7 +215,7 @@ describe('unmarshal()', function() {
   it('required', function() {
     const schema = new archetype.Schema({
       name: { $type: String, $required: true }
-    });
+    }).compile();
 
     let errored = false;
     try {
@@ -233,7 +233,7 @@ describe('unmarshal()', function() {
     const schema = new archetype.Schema({
       name: { $type: String, $required: true, $default: 'bacon' },
       names: [{ $type: String, $required: true, $default: 'eggs' }]
-    });
+    }).compile();
 
     const val = schema.unmarshal({ names: [null] });
     assert.deepEqual(val, { name: 'bacon', names: ['eggs'] });
@@ -245,7 +245,7 @@ describe('unmarshal()', function() {
         first: { $type: String },
         last: { $type: String }
       }
-    });
+    }).compile();
 
     const user = { name: { first: 'Axl', last: 'Rose' } };
     const justFirst = schema.unmarshal(user, { 'name.first': 1 });
@@ -265,7 +265,7 @@ describe('unmarshal()', function() {
           }
         }
       }
-    });
+    }).compile();
 
     assert.throws(function() {
       breakfastSchema.unmarshal({ bacon: 2 });
@@ -283,7 +283,7 @@ describe('unmarshal()', function() {
           }
         }
       }
-    });
+    }).compile();
 
     assert.throws(function() {
       bandSchema.unmarshal({ name: "Guns N' Roses", members: ['Axl Rose'] });
@@ -308,7 +308,7 @@ describe('unmarshal()', function() {
           }
         }
       }]
-    });
+    }).compile();
 
     assert.throws(function() {
       bandSchema.unmarshal({

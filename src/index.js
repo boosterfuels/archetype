@@ -13,6 +13,7 @@ class Schema {
 
   compile() {
     this._paths = visitor(this._obj);
+    return this;
   }
 
   json() {
