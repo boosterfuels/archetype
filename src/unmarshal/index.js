@@ -230,13 +230,15 @@ function runValidation(obj, schema, projection) {
       return;
     }
     if (Array.isArray(val)) {
-      if (val.indexOf('$') === -1) {
+      if (path.indexOf('$') === -1) {
+        debug(`Path "${path}" is plain array`);
         try {
           schema._paths[path].$validate(val, schema._paths[path], obj);
         } catch(_error) {
           error.markError(path, _error);
         }
       } else {
+        debug(`Validate each element for "${path}"`);
         _.each(val, (val, index) => {
           try {
             schema._paths[path].$validate(val, schema._paths[path], obj);

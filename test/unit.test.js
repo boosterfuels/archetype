@@ -294,4 +294,32 @@ describe('unmarshal()', function() {
       members: ['Axl Rose', 'Slash', 'Izzy', 'Duff', 'Adler']
     });
   });
+
+  it('validation with arrays and nested objects', function() {
+    const bandSchema = new archetype.Schema({
+      name: String,
+      members: [{
+        name: {
+          $type: String,
+          $validate: v => {
+            if (['Axl Rose', 'Slash'].indexOf(v) === -1) {
+              throw new Error('Invalid name!');
+            }
+          }
+        }
+      }]
+    });
+
+    assert.throws(function() {
+      bandSchema.unmarshal({
+        name: "Guns N' Roses",
+        members: [{ name: 'Vince Neil' }]
+      });
+    }, /Invalid name!/);
+
+    bandSchema.unmarshal({
+      name: "Guns N' Roses",
+      members: [{ name: 'Axl Rose' }]
+    });
+  });
 });
