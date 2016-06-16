@@ -5,7 +5,8 @@
   "dependencies": {
     "debug": "2.2.0",
     "lodash": "4.6.1",
-    "mpath": "0.2.1"
+    "mpath": "0.2.1",
+    "standard-error": "1.1.0"
   },
   "devDependencies": {
     "acquit": "0.4.0",

@@ -1,6 +1,7 @@
 'use strict';
 
 const Schema = require('../').Schema;
+const StandardError = require('standard-error');
 const ValidateError = require('./error');
 const _ = require('lodash');
 const debug = require('debug')('archetype:umarshal');
@@ -66,7 +67,7 @@ function castDocument(obj, schema, projection) {
   error.merge(checkRequired(obj, schema, projection));
   error.merge(runValidation(obj, schema, projection));
   if (error.hasError) {
-    throw error;
+    throw new StandardError(error.toString(), { errors: error.errors });
   }
   return obj;
 }
