@@ -2,11 +2,11 @@
 
 const assert = require('assert');
 const mongodb = require('mongodb');
-const monoschema = require('../');
+const archetype = require('../');
 
 describe('schema', function() {
   it('compiles paths', function() {
-    let schema = new monoschema.Schema({
+    let schema = new archetype.Schema({
       test: Number,
       nested: {
         a: {
@@ -25,7 +25,7 @@ describe('schema', function() {
   });
 
   it('handles arrays', function() {
-    let schema = new monoschema.Schema({
+    let schema = new archetype.Schema({
       test: Number,
       arrMixed: [],
       arrPlain: [Number],
@@ -37,7 +37,7 @@ describe('schema', function() {
     assert.deepEqual(schema._paths, {
       'test': { $type: Number },
       'arrMixed': { $type: Array },
-      'arrMixed.$': { $type: monoschema.Any },
+      'arrMixed.$': { $type: archetype.Any },
       'arrPlain': { $type: Array },
       'arrPlain.$': { $type: Number },
       'arrNested': { $type: Array },
@@ -47,7 +47,7 @@ describe('schema', function() {
   });
 
   it('handles nested document arrays', function() {
-    let schema = new monoschema.Schema({
+    let schema = new archetype.Schema({
       docs: [{ _id: Number }]
     });
 
@@ -61,7 +61,7 @@ describe('schema', function() {
   });
 
   it('treats keys that start with $ as a terminus', function() {
-    let schema = new monoschema.Schema({
+    let schema = new archetype.Schema({
       test: {
         $prop: 1
       }
@@ -75,7 +75,7 @@ describe('schema', function() {
   });
 
   it('adding paths with .path()', function() {
-    let schema = new monoschema.Schema({
+    let schema = new archetype.Schema({
       docs: [{ _id: Number }]
     });
 
@@ -87,7 +87,7 @@ describe('schema', function() {
 
 describe('unmarshal()', function() {
   it('ignores paths not defined in the schema', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       name: { $type: String }
     });
 
@@ -97,7 +97,7 @@ describe('unmarshal()', function() {
   });
 
   it('casts values to specified types', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       _id: { $type: mongodb.ObjectId },
       name: { $type: String },
       born: { $type: Number }
@@ -119,7 +119,7 @@ describe('unmarshal()', function() {
   });
 
   it('casts into arrays', function() {
-    let schema = new monoschema.Schema({
+    let schema = new archetype.Schema({
       members: [{ $type: mongodb.ObjectId }]
     });
 
@@ -135,7 +135,7 @@ describe('unmarshal()', function() {
   });
 
   it('casts deeply nested arrays', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       points: [[{ $type: Number }]]
     });
 
@@ -148,7 +148,7 @@ describe('unmarshal()', function() {
   });
 
   it('error if you cast an object to a primitive', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       name: {
         first: { $type: String },
         last: { $type: String }
@@ -169,7 +169,7 @@ describe('unmarshal()', function() {
   });
 
   it('ignores if $type not specified', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       members: { $lookUp: { ref: 'Test' } },
       tags: { $type: Array }
     });
@@ -180,7 +180,7 @@ describe('unmarshal()', function() {
   });
 
   it('array of objects to primitive', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       names: [{
         first: { $type: String },
         last: { $type: String }
@@ -201,7 +201,7 @@ describe('unmarshal()', function() {
   });
 
   it('array of objects', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       people: [{name: { $type: String, $required: true } }]
     });
 
@@ -213,7 +213,7 @@ describe('unmarshal()', function() {
   });
 
   it('required', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       name: { $type: String, $required: true }
     });
 
@@ -230,7 +230,7 @@ describe('unmarshal()', function() {
   });
 
   it('default', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       name: { $type: String, $required: true, $default: 'bacon' },
       names: [{ $type: String, $required: true, $default: 'eggs' }]
     });
@@ -240,7 +240,7 @@ describe('unmarshal()', function() {
   });
 
   it('projections', function() {
-    const schema = new monoschema.Schema({
+    const schema = new archetype.Schema({
       name: {
         first: { $type: String },
         last: { $type: String }
@@ -255,7 +255,7 @@ describe('unmarshal()', function() {
   });
 
   it('validation', function() {
-    const breakfastSchema = new monoschema.Schema({
+    const breakfastSchema = new archetype.Schema({
       bacon: {
         $type: Number,
         $required: true,
