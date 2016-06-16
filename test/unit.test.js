@@ -271,4 +271,27 @@ describe('unmarshal()', function() {
       breakfastSchema.unmarshal({ bacon: 2 });
     }, /Need more bacon/);
   });
+
+  it('validation with arrays', function() {
+    const bandSchema = new archetype.Schema({
+      name: String,
+      members: {
+        $type: [String],
+        $validate: v => {
+          if (v.length !== 5) {
+            throw new Error('Must have 5 members');
+          }
+        }
+      }
+    });
+
+    assert.throws(function() {
+      bandSchema.unmarshal({ name: "Guns N' Roses", members: ['Axl Rose'] });
+    }, /Must have 5 members/);
+
+    bandSchema.unmarshal({
+      name: "Guns N' Roses",
+      members: ['Axl Rose', 'Slash', 'Izzy', 'Duff', 'Adler']
+    });
+  });
 });

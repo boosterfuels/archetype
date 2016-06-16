@@ -3,7 +3,7 @@
 const Schema = require('../').Schema;
 const ValidateError = require('./error');
 const _ = require('lodash');
-const debug = require('debug')('monoschema:validate');
+const debug = require('debug')('archetype:umarshal');
 const handleCast = require('./util').handleCast;
 const join = require('./util').join;
 const mpath = require('mpath');
@@ -90,7 +90,8 @@ function visitArray(arr, schema, projection, path) {
 
   debug('newPath', newPath, schema._paths[newPath].$type);
   arr.forEach(function(value, index) {
-    if (schema._paths[newPath].$type === Array) {
+    if (schema._paths[newPath].$type === Array ||
+        Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, join(path, index, true));
       if (res.error) {
         error.merge(res.error);
@@ -147,7 +148,8 @@ function visitObject(obj, schema, projection, path) {
       return;
     }
 
-    if (schema._paths[newPath].$type === Array) {
+    if (schema._paths[newPath].$type === Array ||
+        Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, newPath);
       if (res.error) {
         debug('merge', res.error.errors);
@@ -212,10 +214,13 @@ function checkRequired(obj, schema, projection) {
 function runValidation(obj, schema, projection) {
   const error = new ValidateError();
   _.each(Object.keys(schema._paths), path => {
+    debug(`Checking validation for "${path}"`);
     if (shouldSkipPath(projection, path)) {
+      debug(`Skip validation for "${path}"`);
       return;
     }
     if (!schema._paths[path].$validate) {
+      debug(`No validation for "${path}"`);
       return true;
     }
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
@@ -224,13 +229,21 @@ function runValidation(obj, schema, projection) {
       return;
     }
     if (Array.isArray(val)) {
-      _.each(val, (val, index) => {
+      if (val.indexOf('$') === -1) {
         try {
           schema._paths[path].$validate(val, schema._paths[path], obj);
         } catch(_error) {
-          error.markError(`${path}.${index}`, _error);
+          error.markError(path, _error);
         }
-      });
+      } else {
+        _.each(val, (val, index) => {
+          try {
+            schema._paths[path].$validate(val, schema._paths[path], obj);
+          } catch(_error) {
+            error.markError(`${path}.${index}`, _error);
+          }
+        });
+      }
     } else {
       try {
         schema._paths[path].$validate(val, schema._paths[path], obj);
