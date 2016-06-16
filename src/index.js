@@ -64,6 +64,11 @@ function visitArray(arr, path, paths) {
 function visitObject(obj, path, paths) {
   let keys = Object.keys(obj);
   if (keys.length > 0 && keys[0].charAt(0) === '$') {
+    if (Array.isArray(obj.$type)) {
+      visitArray(obj.$type, path, paths);
+      Object.assign(paths[path], _.omit(obj, '$type'));
+      return;
+    }
     paths[path] = obj;
     return;
   }

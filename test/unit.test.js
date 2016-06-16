@@ -83,6 +83,20 @@ describe('schema', function() {
     schema.path('_id', { $type: Number });
     assert.deepEqual(schema.path('_id'), { $type: Number });
   });
+
+  it('arrays with $type', function() {
+    const schema = new archetype.Schema({
+      docs: { $type: [{ _id: Number }] }
+    });
+
+    schema.compile();
+
+    assert.deepEqual(schema._paths, {
+      'docs': { $type: Array },
+      'docs.$': { $type: Object, $schema: { _id: Number } },
+      'docs.$._id': { $type: Number }
+    });
+  });
 });
 
 describe('unmarshal()', function() {
