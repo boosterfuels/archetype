@@ -12,8 +12,12 @@ class Schema {
   }
 
   compile() {
+    const _this = this;
     this._paths = visitor(this._obj);
-    return this;
+    const type = function(obj, projection) {
+      Object.assign(this, unmarshal(obj, _this, projection));
+    };
+    return type;
   }
 
   json() {

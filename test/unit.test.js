@@ -77,7 +77,7 @@ describe('schema', function() {
   it('adding paths with .path()', function() {
     let schema = new archetype.Schema({
       docs: [{ _id: 'number' }]
-    }).compile();
+    });
 
     assert.ok(!schema.path('_id'));
     schema.path('_id', { $type: 'number' });
@@ -111,7 +111,7 @@ describe('unmarshal()', function() {
   });
 
   it('casts values to specified types', function() {
-    const schema = new archetype.Schema({
+    const Person = new archetype.Schema({
       _id: { $type: mongodb.ObjectId },
       name: { $type: 'string' },
       born: { $type: 'number' }
@@ -123,17 +123,18 @@ describe('unmarshal()', function() {
       born: '1962'
     };
 
-    const res = schema.unmarshal(axl);
+    const res = new Person(axl);
 
     assert.deepEqual(res, {
       _id: mongodb.ObjectId('000000000000000000000001'),
       name: 'Axl Rose',
       born: 1962
     });
+    assert.ok(res instanceof Person);
   });
 
   it('casts into arrays', function() {
-    let schema = new archetype.Schema({
+    let Band = new archetype.Schema({
       members: [{ $type: mongodb.ObjectId }]
     }).compile();
 
@@ -141,7 +142,7 @@ describe('unmarshal()', function() {
       members: '000000000000000000000001'
     };
 
-    const res = schema.unmarshal(band);
+    const res = new Band(band);
 
     assert.deepEqual(res, {
       members: [mongodb.ObjectId('000000000000000000000001')]
@@ -149,12 +150,12 @@ describe('unmarshal()', function() {
   });
 
   it('casts deeply nested arrays', function() {
-    const schema = new archetype.Schema({
+    const Graph = new archetype.Schema({
       points: [[{ $type: 'number' }]]
     }).compile();
 
     const obj = { points: 1 };
-    const res = schema.unmarshal(obj);
+    const res = new Graph(obj);
 
     assert.deepEqual(res, {
       points: [[1]]
@@ -162,12 +163,12 @@ describe('unmarshal()', function() {
   });
 
   it('does not cast $type: Object', function() {
-    const schema = new archetype.Schema({
+    const Test = new archetype.Schema({
       nested: { $type: Object }
     }).compile();
 
     const obj = { nested: { hello: 'world' }, removed: 'field' };
-    const res = schema.unmarshal(obj);
+    const res = new Test(obj);
 
     assert.deepEqual(res, {
       nested: { hello: 'world' }
@@ -175,7 +176,7 @@ describe('unmarshal()', function() {
   });
 
   it('error if you cast an object to a primitive', function() {
-    const schema = new archetype.Schema({
+    const Person = new archetype.Schema({
       name: {
         first: { $type: 'string' },
         last: { $type: 'string' }
@@ -185,7 +186,7 @@ describe('unmarshal()', function() {
     let user = { name: 'Axl Rose' };
     let errored = false;
     try {
-      schema.unmarshal(user);
+      new Person(user);
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
@@ -196,18 +197,18 @@ describe('unmarshal()', function() {
   });
 
   it('ignores if $type not specified', function() {
-    const schema = new archetype.Schema({
+    const Band = new archetype.Schema({
       members: { $lookUp: { ref: 'Test' } },
       tags: { $type: Array }
     }).compile();
 
     const band = { members: { x: 1 } };
-    const res = schema.unmarshal(band);
+    const res = new Band(band);
     assert.deepEqual(res, { members: { x: 1 } })
   });
 
   it('array of objects to primitive', function() {
-    const schema = new archetype.Schema({
+    const Band = new archetype.Schema({
       names: [{
         first: { $type: 'string' },
         last: { $type: 'string' }
@@ -217,7 +218,7 @@ describe('unmarshal()', function() {
     const user = { names: ['Axl Rose'] };
     let errored = false;
     try {
-      schema.unmarshal(user);
+      new Band(user);
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
@@ -228,25 +229,25 @@ describe('unmarshal()', function() {
   });
 
   it('array of objects', function() {
-    const schema = new archetype.Schema({
+    const Band = new archetype.Schema({
       people: [{name: { $type: 'string', $required: true } }]
     }).compile();
 
     const v = { people: [{ name: 'Axl Rose', other: 'field' }] };
-    const res = schema.unmarshal(v);
+    const res = new Band(v);
     assert.deepEqual(res, {
       people: [{ name: 'Axl Rose' }]
     });
   });
 
   it('required', function() {
-    const schema = new archetype.Schema({
+    const Person = new archetype.Schema({
       name: { $type: 'string', $required: true }
     }).compile();
 
     let errored = false;
     try {
-      schema.unmarshal({});
+      new Person({});
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
@@ -257,17 +258,17 @@ describe('unmarshal()', function() {
   });
 
   it('default', function() {
-    const schema = new archetype.Schema({
+    const Breakfast = new archetype.Schema({
       name: { $type: 'string', $required: true, $default: 'bacon' },
       names: [{ $type: 'string', $required: true, $default: 'eggs' }]
     }).compile();
 
-    const val = schema.unmarshal({ names: [null] });
+    const val = new Breakfast({ names: [null] });
     assert.deepEqual(val, { name: 'bacon', names: ['eggs'] });
   });
 
   it('projections', function() {
-    const schema = new archetype.Schema({
+    const Person = new archetype.Schema({
       name: {
         first: { $type: 'string' },
         last: { $type: 'string' }
@@ -275,14 +276,14 @@ describe('unmarshal()', function() {
     }).compile();
 
     const user = { name: { first: 'Axl', last: 'Rose' } };
-    const justFirst = schema.unmarshal(user, { 'name.first': 1 });
+    const justFirst = new Person(user, { 'name.first': 1 });
     assert.deepEqual(justFirst, { name: { first: 'Axl' } });
-    const justLast = schema.unmarshal(user, { 'name.first': 0 });
+    const justLast = new Person(user, { 'name.first': 0 });
     assert.deepEqual(justLast, { name: { last: 'Rose' } });
   });
 
   it('validation', function() {
-    const breakfastSchema = new archetype.Schema({
+    const Breakfast = new archetype.Schema({
       bacon: {
         $type: 'number',
         $required: true,
@@ -295,12 +296,12 @@ describe('unmarshal()', function() {
     }).compile();
 
     assert.throws(function() {
-      breakfastSchema.unmarshal({ bacon: 2 });
+      new Breakfast({ bacon: 2 });
     }, /Need more bacon/);
   });
 
   it('validation with arrays', function() {
-    const bandSchema = new archetype.Schema({
+    const Band = new archetype.Schema({
       name: 'string',
       members: {
         $type: ['string'],
@@ -313,17 +314,17 @@ describe('unmarshal()', function() {
     }).compile();
 
     assert.throws(function() {
-      bandSchema.unmarshal({ name: "Guns N' Roses", members: ['Axl Rose'] });
+      new Band({ name: "Guns N' Roses", members: ['Axl Rose'] });
     }, /Must have 5 members/);
 
-    bandSchema.unmarshal({
+    new Band({
       name: "Guns N' Roses",
       members: ['Axl Rose', 'Slash', 'Izzy', 'Duff', 'Adler']
     });
   });
 
   it('validation with arrays and nested objects', function() {
-    const bandSchema = new archetype.Schema({
+    const Band = new archetype.Schema({
       name: 'string',
       members: [{
         name: {
@@ -338,13 +339,13 @@ describe('unmarshal()', function() {
     }).compile();
 
     assert.throws(function() {
-      bandSchema.unmarshal({
+      new Band({
         name: "Guns N' Roses",
         members: [{ name: 'Vince Neil' }]
       });
     }, /Invalid name!/);
 
-    bandSchema.unmarshal({
+    new Band({
       name: "Guns N' Roses",
       members: [{ name: 'Axl Rose' }]
     });
