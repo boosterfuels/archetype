@@ -135,7 +135,14 @@ function visitObject(obj, schema, projection, path) {
   }
 
   let fakePath = realPathToSchemaPath(path);
-  debug('fakePath', fakePath);
+  debug('fakePath', fakePath, obj);
+  const curSchema = schema._paths[fakePath];
+  if (fakePath && !curSchema.$schema) {
+    return {
+      value: obj,
+      error: (error.hasError ? error : null)
+    };
+  }
 
   _.each(obj, function(value, key) {
     let newPath = join(fakePath, key);
@@ -144,7 +151,8 @@ function visitObject(obj, schema, projection, path) {
       delete obj[key];
       return;
     }
-    if (!schema._paths[newPath].$type) {
+    const newSchema = schema._paths[newPath]
+    if (newSchema.$type == null) {
       // If type not specified, no type casting
       return;
     }

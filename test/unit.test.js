@@ -161,6 +161,19 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('does not cast $type: Object', function() {
+    const schema = new archetype.Schema({
+      nested: { $type: Object }
+    }).compile();
+
+    const obj = { nested: { hello: 'world' }, removed: 'field' };
+    const res = schema.unmarshal(obj);
+
+    assert.deepEqual(res, {
+      nested: { hello: 'world' }
+    });
+  });
+
   it('error if you cast an object to a primitive', function() {
     const schema = new archetype.Schema({
       name: {
