@@ -7,10 +7,10 @@ const archetype = require('../');
 describe('schema', function() {
   it('compiles paths', function() {
     let schema = new archetype.Schema({
-      test: Number,
+      test: 'number',
       nested: {
         a: {
-          $type: Number
+          $type: 'number'
         }
       }
     });
@@ -18,45 +18,45 @@ describe('schema', function() {
     schema.compile();
 
     assert.deepEqual(schema._paths, {
-      test: { $type: Number },
-      nested: { $type: Object, $schema: { a: { $type: Number } } },
-      'nested.a': { $type: Number }
+      test: { $type: 'number' },
+      nested: { $type: Object, $schema: { a: { $type: 'number' } } },
+      'nested.a': { $type: 'number' }
     });
   });
 
   it('handles arrays', function() {
     let schema = new archetype.Schema({
-      test: Number,
+      test: 'number',
       arrMixed: [],
-      arrPlain: [Number],
-      arrNested: [[Number]]
+      arrPlain: ['number'],
+      arrNested: [['number']]
     });
 
     schema.compile();
 
     assert.deepEqual(schema._paths, {
-      'test': { $type: Number },
+      'test': { $type: 'number' },
       'arrMixed': { $type: Array },
       'arrMixed.$': { $type: archetype.Any },
       'arrPlain': { $type: Array },
-      'arrPlain.$': { $type: Number },
+      'arrPlain.$': { $type: 'number' },
       'arrNested': { $type: Array },
       'arrNested.$': { $type: Array },
-      'arrNested.$.$': { $type: Number }
+      'arrNested.$.$': { $type: 'number' }
     });
   });
 
   it('handles nested document arrays', function() {
     let schema = new archetype.Schema({
-      docs: [{ _id: Number }]
+      docs: [{ _id: 'number' }]
     });
 
     schema.compile();
 
     assert.deepEqual(schema._paths, {
       'docs': { $type: Array },
-      'docs.$': { $type: Object, $schema: { _id: Number } },
-      'docs.$._id': { $type: Number }
+      'docs.$': { $type: Object, $schema: { _id: 'number' } },
+      'docs.$._id': { $type: 'number' }
     });
   });
 
@@ -76,25 +76,25 @@ describe('schema', function() {
 
   it('adding paths with .path()', function() {
     let schema = new archetype.Schema({
-      docs: [{ _id: Number }]
+      docs: [{ _id: 'number' }]
     }).compile();
 
     assert.ok(!schema.path('_id'));
-    schema.path('_id', { $type: Number });
-    assert.deepEqual(schema.path('_id'), { $type: Number });
+    schema.path('_id', { $type: 'number' });
+    assert.deepEqual(schema.path('_id'), { $type: 'number' });
   });
 
   it('arrays with $type', function() {
     const schema = new archetype.Schema({
-      docs: { $type: [{ _id: Number }] }
+      docs: { $type: [{ _id: 'number' }] }
     });
 
     schema.compile();
 
     assert.deepEqual(schema._paths, {
       'docs': { $type: Array },
-      'docs.$': { $type: Object, $schema: { _id: Number } },
-      'docs.$._id': { $type: Number }
+      'docs.$': { $type: Object, $schema: { _id: 'number' } },
+      'docs.$._id': { $type: 'number' }
     });
   });
 });
@@ -102,7 +102,7 @@ describe('schema', function() {
 describe('unmarshal()', function() {
   it('ignores paths not defined in the schema', function() {
     const schema = new archetype.Schema({
-      name: { $type: String }
+      name: { $type: 'string' }
     });
 
     const axl = { name: 'Axl Rose', role: 'Lead Singer' };
@@ -113,8 +113,8 @@ describe('unmarshal()', function() {
   it('casts values to specified types', function() {
     const schema = new archetype.Schema({
       _id: { $type: mongodb.ObjectId },
-      name: { $type: String },
-      born: { $type: Number }
+      name: { $type: 'string' },
+      born: { $type: 'number' }
     }).compile();
 
     const axl = {
@@ -150,7 +150,7 @@ describe('unmarshal()', function() {
 
   it('casts deeply nested arrays', function() {
     const schema = new archetype.Schema({
-      points: [[{ $type: Number }]]
+      points: [[{ $type: 'number' }]]
     }).compile();
 
     const obj = { points: 1 };
@@ -177,8 +177,8 @@ describe('unmarshal()', function() {
   it('error if you cast an object to a primitive', function() {
     const schema = new archetype.Schema({
       name: {
-        first: { $type: String },
-        last: { $type: String }
+        first: { $type: 'string' },
+        last: { $type: 'string' }
       }
     }).compile();
 
@@ -209,8 +209,8 @@ describe('unmarshal()', function() {
   it('array of objects to primitive', function() {
     const schema = new archetype.Schema({
       names: [{
-        first: { $type: String },
-        last: { $type: String }
+        first: { $type: 'string' },
+        last: { $type: 'string' }
       }]
     }).compile();
 
@@ -229,7 +229,7 @@ describe('unmarshal()', function() {
 
   it('array of objects', function() {
     const schema = new archetype.Schema({
-      people: [{name: { $type: String, $required: true } }]
+      people: [{name: { $type: 'string', $required: true } }]
     }).compile();
 
     const v = { people: [{ name: 'Axl Rose', other: 'field' }] };
@@ -241,7 +241,7 @@ describe('unmarshal()', function() {
 
   it('required', function() {
     const schema = new archetype.Schema({
-      name: { $type: String, $required: true }
+      name: { $type: 'string', $required: true }
     }).compile();
 
     let errored = false;
@@ -258,8 +258,8 @@ describe('unmarshal()', function() {
 
   it('default', function() {
     const schema = new archetype.Schema({
-      name: { $type: String, $required: true, $default: 'bacon' },
-      names: [{ $type: String, $required: true, $default: 'eggs' }]
+      name: { $type: 'string', $required: true, $default: 'bacon' },
+      names: [{ $type: 'string', $required: true, $default: 'eggs' }]
     }).compile();
 
     const val = schema.unmarshal({ names: [null] });
@@ -269,8 +269,8 @@ describe('unmarshal()', function() {
   it('projections', function() {
     const schema = new archetype.Schema({
       name: {
-        first: { $type: String },
-        last: { $type: String }
+        first: { $type: 'string' },
+        last: { $type: 'string' }
       }
     }).compile();
 
@@ -284,7 +284,7 @@ describe('unmarshal()', function() {
   it('validation', function() {
     const breakfastSchema = new archetype.Schema({
       bacon: {
-        $type: Number,
+        $type: 'number',
         $required: true,
         $validate: v => {
           if (v < 3) {
@@ -301,9 +301,9 @@ describe('unmarshal()', function() {
 
   it('validation with arrays', function() {
     const bandSchema = new archetype.Schema({
-      name: String,
+      name: 'string',
       members: {
-        $type: [String],
+        $type: ['string'],
         $validate: v => {
           if (v.length !== 5) {
             throw new Error('Must have 5 members');
@@ -324,10 +324,10 @@ describe('unmarshal()', function() {
 
   it('validation with arrays and nested objects', function() {
     const bandSchema = new archetype.Schema({
-      name: String,
+      name: 'string',
       members: [{
         name: {
-          $type: String,
+          $type: 'string',
           $validate: v => {
             if (['Axl Rose', 'Slash'].indexOf(v) === -1) {
               throw new Error('Invalid name!');

@@ -1,26 +1,40 @@
 'use strict';
 
-let SPECIAL_CASES = new WeakMap();
-SPECIAL_CASES.
-  set(Number, function(v) {
-    let casted = Number(v);
-    if (isNaN(casted)) {
-      throw new Error('Could not cast ' + require('util').inspect(v) +
-        ' to Number');
+const CAST_PRIMITIVES = {
+  number: v => {
+    const res = Number(v).valueOf();
+    if (Number.isNaN(res)) {
+      throw new Error(`Could not cast "${v}" to number`);
     }
-    return casted;
-  }).
-  set(String, String).
-  set(Boolean, function(v) {
-    if (typeof v === 'boolean') {
-      return v;
+    return res
+  },
+  string: v => {
+    if (v.toString === Object.prototype.toString) {
+      throw new Error(`Could not cast "${v}" to string`);
     }
-    return Boolean(v).valueOf();
-  });
+    return v.toString()
+  },
+  boolean: v => {
+    const str = v
+    if (str === '1' || str === 'true' || str === 'yes') {
+      return true;
+    }
+    if (str === '0' || str === 'false' || str === 'no') {
+      return false;
+    }
+    throw new Error(`Could not cast "${v}" to boolean`);
+  }
+}
 
 exports.to = function(v, type) {
-  if (SPECIAL_CASES.has(type)) {
-    return SPECIAL_CASES.get(type)(v);
+  if (typeof type === 'string') {
+    if (!CAST_PRIMITIVES[type]) {
+      throw new Error(`"${type}" is not a valid primitive type`);
+    }
+    if (typeof v === type) {
+      return v;
+    }
+    return CAST_PRIMITIVES[type](v);
   }
 
   if (!(v instanceof type)) {
