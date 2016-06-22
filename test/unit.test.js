@@ -323,6 +323,31 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('supports nested types', function() {
+    const Person = new archetype.Schema({
+      name: 'string'
+    }).compile();
+    const Band = new archetype.Schema({
+      name: 'string',
+      singer: {
+        $type: Person
+      }
+    }).compile();
+
+    const gnr = new Band({
+      name: "Guns N' Roses",
+      singer: {
+        name: 'Axl Rose'
+      }
+    });
+    assert.deepEqual(gnr, {
+      name: "Guns N' Roses",
+      singer: {
+        name: 'Axl Rose'
+      }
+    });
+  });
+
   it('validation with arrays and nested objects', function() {
     const Band = new archetype.Schema({
       name: 'string',
