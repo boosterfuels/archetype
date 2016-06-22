@@ -11,12 +11,16 @@ class Schema {
     this.compile();
   }
 
-  compile() {
+  compile(name) {
     const _this = this;
     this._paths = visitor(this._obj);
     const type = function(obj, projection) {
       Object.assign(this, unmarshal(obj, _this, projection));
     };
+    Object.assign(type, this);
+    if (name) {
+      type.toString = () => name;
+    }
     return type;
   }
 

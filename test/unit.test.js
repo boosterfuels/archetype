@@ -348,6 +348,13 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('compile takes a name param', function() {
+    const Person = new archetype.Schema({
+      name: 'string'
+    }).compile('PersonModel');
+    assert.equal(Person.toString(), 'PersonModel');
+  });
+
   it('validation with arrays and nested objects', function() {
     const Band = new archetype.Schema({
       name: 'string',
