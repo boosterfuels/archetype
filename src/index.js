@@ -4,11 +4,10 @@ const Any = require('./any');
 const _ = require('lodash');
 const unmarshal = require('./unmarshal');
 
-class Schema {
+class Archetype {
   constructor(obj) {
     this._obj = _.cloneDeep(obj);
     this._paths = {};
-    this.compile();
   }
 
   compile(name) {
@@ -17,9 +16,9 @@ class Schema {
     const type = function(obj, projection) {
       Object.assign(this, unmarshal(obj, _this, projection));
     };
-    Object.assign(type, this);
     if (name) {
       type.toString = () => name;
+      Object.defineProperty(type, 'name', { value: name });
     }
     return type;
   }
@@ -102,7 +101,7 @@ function join(path, key) {
   return key;
 }
 
-Schema.Any = Any;
+Archetype.Any = Any;
 
 exports.Any = Any;
-exports.Schema = Schema;
+exports.Archetype = Archetype;

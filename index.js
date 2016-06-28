@@ -1,3 +1,3 @@
-exports.Any = require('./src').Any;
-exports.Schema = require('./src').Schema;
-exports.to = require('./src/unmarshal/util').to;
+module.exports = require('./src').Archetype;
+module.exports.Any = require('./src').Any;
+module.exports.to = require('./src/unmarshal/util').to;
