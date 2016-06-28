@@ -2,6 +2,9 @@
 
 const CAST_PRIMITIVES = {
   number: v => {
+    if (v == null) {
+      return v;
+    }
     const res = Number(v).valueOf();
     if (Number.isNaN(res)) {
       throw new Error(`Could not cast "${v}" to number`);
@@ -9,13 +12,19 @@ const CAST_PRIMITIVES = {
     return res
   },
   string: v => {
+    if (v == null) {
+      return v;
+    }
     if (v.toString === Object.prototype.toString) {
       throw new Error(`Could not cast "${v}" to string`);
     }
-    return v.toString()
+    return v.toString();
   },
   boolean: v => {
-    const str = v
+    if (v == null) {
+      return v;
+    }
+    const str = v.toString();
     if (str === '1' || str === 'true' || str === 'yes') {
       return true;
     }

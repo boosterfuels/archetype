@@ -257,14 +257,57 @@ describe('unmarshal()', function() {
     assert.ok(errored);
   });
 
+  it('required in array', function() {
+    const Person = new Archetype({
+      names: [{ $type: 'string', $required: true }]
+    }).compile();
+
+    let errored = false;
+    try {
+      new Person({ names: ['test', null] });
+    } catch(error) {
+      errored = true;
+      assert.deepEqual(error.errors, {
+        'names.$': new Error('Path "names.$" is required')
+      });
+    }
+    assert.ok(errored);
+  });
+
   it('default', function() {
     const Breakfast = new Archetype({
       name: { $type: 'string', $required: true, $default: 'bacon' },
-      names: [{ $type: 'string', $required: true, $default: 'eggs' }]
+      names: [{ $type: 'string', $required: true, $default: 'eggs' }],
+      title: { $type: 'string', $default: 'N/A' }
     }).compile();
 
-    const val = new Breakfast({ names: [null] });
-    assert.deepEqual(val, { name: 'bacon', names: ['eggs'] });
+    const val = new Breakfast({ names: [null, 'avocado'], title: 'test' });
+    assert.deepEqual(val, {
+      name: 'bacon',
+      names: ['eggs', 'avocado'],
+      title: 'test'
+    });
+  });
+
+  it('default function', function() {
+    const now = Date.now();
+    const Model = new Archetype({
+      createdAt: { $type: Date, $required: true, $default: Date.now }
+    }).compile();
+
+    const val = new Model({});
+    assert.ok(val.createdAt.getTime() >= now, `${val.createdAt}, ${now}`);
+  });
+
+  it('no defaults for projecton', function() {
+    const now = Date.now();
+    const Model = new Archetype({
+      name: { $type: 'string', $default: 'test' },
+      createdAt: { $type: Date, $required: true, $default: Date.now }
+    }).compile();
+
+    const val = new Model({}, { createdAt: false });
+    assert.deepEqual(val, { name: 'test' });
   });
 
   it('projections', function() {

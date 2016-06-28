@@ -111,7 +111,7 @@ function visitArray(arr, schema, projection, path) {
     try {
       handleTerminus(arr, index, schema, newPath);
     } catch(err) {
-      error.markError(join(realPath, index, true), err);
+      error.markError(join(path, index, true), err);
     }
   });
 
@@ -278,7 +278,7 @@ function applyDefaults(obj, schema, projection) {
     const val = mpath.get(_path, obj);
     if (Array.isArray(val)) {
       for (let i = 0; i < val.length; ++i) {
-        if (!val[i]) {
+        if (val[i] == null) {
           val[i] = handleDefault(schema._paths[path].$default);
         }
       }
