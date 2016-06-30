@@ -268,7 +268,7 @@ function runValidation(obj, schema, projection) {
 
 function applyDefaults(obj, schema, projection) {
   _.each(Object.keys(schema._paths), path => {
-    if (!schema._paths[path].$default) {
+    if (!('$default' in schema._paths[path])) {
       return;
     }
     if (shouldSkipPath(projection, path)) {
