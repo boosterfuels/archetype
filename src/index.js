@@ -16,6 +16,7 @@ class Archetype {
     const type = function(obj, projection) {
       Object.assign(this, unmarshal(obj, _this, projection));
     };
+    type.schema = this;
     if (name) {
       type.toString = () => name;
       Object.defineProperty(type, 'name', { value: name });
