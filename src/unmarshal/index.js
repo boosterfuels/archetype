@@ -279,19 +279,19 @@ function applyDefaults(obj, schema, projection) {
     if (Array.isArray(val)) {
       for (let i = 0; i < val.length; ++i) {
         if (val[i] == null) {
-          val[i] = handleDefault(schema._paths[path].$default);
+          val[i] = handleDefault(schema._paths[path].$default, obj);
         }
       }
       mpath.set(_path, val, obj);
     } else if (val == null) {
-      mpath.set(_path, handleDefault(schema._paths[path].$default), obj);
+      mpath.set(_path, handleDefault(schema._paths[path].$default, obj), obj);
     }
   });
 }
 
-function handleDefault(obj) {
+function handleDefault(obj, ctx) {
   if (typeof obj === 'function') {
-    return obj();
+    return obj(ctx);
   }
   return obj;
 }
