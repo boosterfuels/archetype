@@ -29,6 +29,9 @@ function handleProjection(projection) {
   projection = _.cloneDeep(projection);
   let inclusive = null;
   for (const key of Object.keys(projection)) {
+    if (key.startsWith('$')) {
+      continue;
+    }
     if (projection[key] > 0) {
       if (inclusive === true) {
         throw new Error("Can't mix inclusive and exclusive in projection");
@@ -201,7 +204,7 @@ function handleTerminus(value, key, schema, path) {
 function checkRequired(obj, schema, projection) {
   const error = new ValidateError();
   _.each(Object.keys(schema._paths), path => {
-    if (shouldSkipPath(projection, path)) {
+    if (shouldSkipPath(projection, path) || projection.$noRequired) {
       return;
     }
     if (!schema._paths[path].$required) {

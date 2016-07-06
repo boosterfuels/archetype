@@ -255,6 +255,8 @@ describe('unmarshal()', function() {
       });
     }
     assert.ok(errored);
+
+    new Person({}, { $noRequired: 1 }); 
   });
 
   it('required in array', function() {
