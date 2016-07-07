@@ -429,4 +429,13 @@ describe('unmarshal()', function() {
       members: [{ name: 'Axl Rose' }]
     });
   });
+
+  it('arrays with null', function() {
+    const Nest = new Archetype({ name: { $type: 'string', $required: true } }).compile();
+    const Test = new Archetype({
+      members: { $type: [Nest] }
+    }).compile();
+
+    new Test({ members: null });
+  });
 });

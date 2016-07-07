@@ -88,6 +88,13 @@ function visitArray(arr, schema, projection, path) {
     };
   }
 
+  if (arr == null) {
+    return {
+      value: arr,
+      error: null
+    };
+  }
+
   if (!Array.isArray(arr)) {
     arr = [arr];
   }
