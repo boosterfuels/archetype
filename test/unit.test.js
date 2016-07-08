@@ -60,17 +60,31 @@ describe('schema', function() {
     });
   });
 
-  it('treats keys that start with $ as a terminus', function() {
+  it('treats keys that contain $type as a terminus', function() {
     let schema = new Archetype({
       test: {
-        $prop: 1
+        $type: 1
       }
     });
 
     schema.compile();
 
     assert.deepEqual(schema._paths, {
-      'test': { $prop: 1 }
+      'test': { $type: 1 }
+    });
+  });
+
+  it('supports $ keys', function() {
+    let schema = new Archetype({
+      $lt: 'number',
+      $gt: 'number'
+    });
+
+    schema.compile();
+
+    assert.deepEqual(schema._paths, {
+      '$lt': { $type: 'number' },
+      '$gt': { $type: 'number' }
     });
   });
 
@@ -198,7 +212,7 @@ describe('unmarshal()', function() {
 
   it('ignores if $type not specified', function() {
     const Band = new Archetype({
-      members: { $lookUp: { ref: 'Test' } },
+      members: { $lookUp: { ref: 'Test' }, $type: null },
       tags: { $type: Array }
     }).compile();
 
