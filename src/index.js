@@ -1,6 +1,5 @@
 'use strict';
 
-const Any = require('./any');
 const _ = require('lodash');
 const unmarshal = require('./unmarshal');
 
@@ -64,7 +63,7 @@ function visitArray(arr, path, paths) {
       paths[path + '.$'] = { $type: arr[0] };
     }
   } else {
-    paths[path + '.$'] = { $type: Any };
+    paths[path + '.$'] = { $type: null };
   }
   return paths[path];
 }
@@ -101,7 +100,4 @@ function join(path, key) {
   return key;
 }
 
-Archetype.Any = Any;
-
-exports.Any = Any;
 exports.Archetype = Archetype;
