@@ -63,6 +63,9 @@ function shouldSkipPath(projection, path) {
 
 function castDocument(obj, schema, projection) {
   projection = handleProjection(projection);
+  if (obj == null) {
+    throw new Error(`Can't cast null or undefined`);
+  }
   obj = _.cloneDeep(obj);
   applyDefaults(obj, schema, projection);
   const error = new ValidateError();
