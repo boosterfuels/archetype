@@ -20,6 +20,7 @@ class Archetype {
       type.toString = () => name;
       Object.defineProperty(type, 'name', { value: name });
     }
+    type.paths = () => this.paths();
     return type;
   }
 
@@ -37,7 +38,7 @@ class Archetype {
 
   paths() {
     return _.map(Object.keys(this._paths),
-      path => ({ key: path, value: this[path] }));
+      path => Object.assign({}, this._paths[path], { path }));
   }
 
   unmarshal(obj, projection) {

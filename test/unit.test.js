@@ -270,7 +270,7 @@ describe('unmarshal()', function() {
     }
     assert.ok(errored);
 
-    new Person({}, { $noRequired: 1 }); 
+    new Person({}, { $noRequired: 1 });
   });
 
   it('required in array', function() {
@@ -451,5 +451,26 @@ describe('unmarshal()', function() {
     }).compile();
 
     new Test({ members: null });
+  });
+
+  it('get paths as array', function() {
+    const Test = new Archetype({
+      str: 'string',
+      num: {
+        $type: 'number',
+        $description: 'this is a number'
+      }
+    }).compile();
+
+    assert.deepEqual(Test.paths().filter(v => !v.$description), [
+      { path: 'str', $type: 'string' }
+    ])
+    assert.deepEqual(Test.paths().filter(v => !!v.$description), [
+      {
+        path: 'num',
+        $type: 'number',
+        $description: 'this is a number'
+      }
+    ])
   });
 });
