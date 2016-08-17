@@ -6,8 +6,8 @@ const ValidateError = require('./error');
 const _ = require('lodash');
 const debug = require('debug')('archetype:umarshal');
 const handleCast = require('./util').handleCast;
-const { inspect } = require('util');
-const { join } = require('./util');
+const inspect = require('util').inspect;
+const join = require('./util').join;
 const mpath = require('mpath');
 const realPathToSchemaPath = require('./util').realPathToSchemaPath;
 
