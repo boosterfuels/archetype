@@ -388,16 +388,24 @@ describe('unmarshal()', function() {
       type: {
         $type: 'string',
         $enum: ['steak and eggs', 'bacon and eggs']
-      }
+      },
+      addOns: [
+        { name: { $type: 'string', $enum: ['cheese', 'sour cream'] } }
+      ]
     }).compile();
 
     assert.throws(function() {
       new Breakfast({ type: 'waffles' });
     }, /Value "waffles" invalid/);
 
+    assert.throws(function() {
+      new Breakfast({ addOns: [{ name: 'maple syrup' }] });
+    }, /Value "maple syrup" invalid/);
+
     // works
     new Breakfast({ type: 'steak and eggs' });
     new Breakfast({});
+    new Breakfast({ addOns: [{ name: 'cheese' }] });
   });
 
   it('validation with arrays', function() {

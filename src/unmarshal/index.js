@@ -260,11 +260,22 @@ function runValidation(obj, schema, projection) {
     }
 
     if (Array.isArray(schema._paths[path].$enum)) {
-      if (schema._paths[path].$enum.indexOf(val) === -1) {
-        const msg = `Value "${val}" invalid, allowed values are ` +
-          `"${inspect(schema._paths[path].$enum)}"`;
-        error.markError(path, new Error(msg));
-        return;
+      if (Array.isArray(val)) {
+        _.each(val, (val, index) => {
+          if (schema._paths[path].$enum.indexOf(val) === -1) {
+            const msg = `Value "${val}" invalid, allowed values are ` +
+              `"${inspect(schema._paths[path].$enum)}"`;
+            error.markError([path, index].join('.'), new Error(msg));
+            return;
+          }
+        });
+      } else {
+        if (schema._paths[path].$enum.indexOf(val) === -1) {
+          const msg = `Value "${val}" invalid, allowed values are ` +
+            `"${inspect(schema._paths[path].$enum)}"`;
+          error.markError(path, new Error(msg));
+          return;
+        }
       }
     }
 
