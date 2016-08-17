@@ -387,7 +387,6 @@ describe('unmarshal()', function() {
     const Breakfast = new Archetype({
       type: {
         $type: 'string',
-        $required: true,
         $enum: ['steak and eggs', 'bacon and eggs']
       }
     }).compile();
@@ -398,6 +397,7 @@ describe('unmarshal()', function() {
 
     // works
     new Breakfast({ type: 'steak and eggs' });
+    new Breakfast({});
   });
 
   it('validation with arrays', function() {

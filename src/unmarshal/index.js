@@ -250,6 +250,15 @@ function runValidation(obj, schema, projection) {
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
     const val = mpath.get(_path, obj);
 
+    if (!schema._paths[path].$validate && !schema._paths[path].$enum) {
+      debug(`No validation for "${path}"`);
+      return true;
+    }
+
+    if (val == null) {
+      return;
+    }
+
     if (Array.isArray(schema._paths[path].$enum)) {
       if (schema._paths[path].$enum.indexOf(val) === -1) {
         const msg = `Value "${val}" invalid, allowed values are ` +
@@ -258,37 +267,32 @@ function runValidation(obj, schema, projection) {
         return;
       }
     }
-    if (!schema._paths[path].$validate) {
-      debug(`No validation for "${path}"`);
-      return true;
-    }
 
-    if (val == null) {
-      return;
-    }
-    if (Array.isArray(val)) {
-      if (path.indexOf('$') === -1) {
-        debug(`Path "${path}" is plain array`);
+    if (schema._paths[path].$validate) {
+      if (Array.isArray(val)) {
+        if (path.indexOf('$') === -1) {
+          debug(`Path "${path}" is plain array`);
+          try {
+            schema._paths[path].$validate(val, schema._paths[path], obj);
+          } catch(_error) {
+            error.markError(path, _error);
+          }
+        } else {
+          debug(`Validate each element for "${path}"`);
+          _.each(val, (val, index) => {
+            try {
+              schema._paths[path].$validate(val, schema._paths[path], obj);
+            } catch(_error) {
+              error.markError(`${path}.${index}`, _error);
+            }
+          });
+        }
+      } else {
         try {
           schema._paths[path].$validate(val, schema._paths[path], obj);
         } catch(_error) {
           error.markError(path, _error);
         }
-      } else {
-        debug(`Validate each element for "${path}"`);
-        _.each(val, (val, index) => {
-          try {
-            schema._paths[path].$validate(val, schema._paths[path], obj);
-          } catch(_error) {
-            error.markError(`${path}.${index}`, _error);
-          }
-        });
-      }
-    } else {
-      try {
-        schema._paths[path].$validate(val, schema._paths[path], obj);
-      } catch(_error) {
-        error.markError(path, _error);
       }
     }
   });
