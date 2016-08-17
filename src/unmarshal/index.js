@@ -6,7 +6,8 @@ const ValidateError = require('./error');
 const _ = require('lodash');
 const debug = require('debug')('archetype:umarshal');
 const handleCast = require('./util').handleCast;
-const join = require('./util').join;
+const { inspect } = require('util');
+const { join } = require('./util');
 const mpath = require('mpath');
 const realPathToSchemaPath = require('./util').realPathToSchemaPath;
 
@@ -245,12 +246,23 @@ function runValidation(obj, schema, projection) {
       debug(`Skip validation for "${path}"`);
       return;
     }
+
+    const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
+    const val = mpath.get(_path, obj);
+
+    if (Array.isArray(schema._paths[path].$enum)) {
+      if (schema._paths[path].$enum.indexOf(val) === -1) {
+        const msg = `Value "${val}" invalid, allowed values are ` +
+          `"${inspect(schema._paths[path].$enum)}"`;
+        error.markError(path, new Error(msg));
+        return;
+      }
+    }
     if (!schema._paths[path].$validate) {
       debug(`No validation for "${path}"`);
       return true;
     }
-    const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
-    const val = mpath.get(_path, obj);
+
     if (val == null) {
       return;
     }

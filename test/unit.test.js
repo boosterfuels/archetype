@@ -383,6 +383,23 @@ describe('unmarshal()', function() {
     }, /Need more bacon/);
   });
 
+  it('enum', function() {
+    const Breakfast = new Archetype({
+      type: {
+        $type: 'string',
+        $required: true,
+        $enum: ['steak and eggs', 'bacon and eggs']
+      }
+    }).compile();
+
+    assert.throws(function() {
+      new Breakfast({ type: 'waffles' });
+    }, /Value "waffles" invalid/);
+
+    // works
+    new Breakfast({ type: 'steak and eggs' });
+  });
+
   it('validation with arrays', function() {
     const Band = new Archetype({
       name: 'string',
