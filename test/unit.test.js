@@ -273,6 +273,30 @@ describe('unmarshal()', function() {
     new Person({}, { $noRequired: 1 });
   });
 
+  it('required function', function() {
+    const Person = new Archetype({
+      requireName: 'boolean',
+      name: { $type: 'string', $required: doc => doc.requireName }
+    }).compile();
+
+    // works
+    new Person({});
+
+    let errored = false;
+    try {
+      new Person({ requireName: true });
+    } catch(error) {
+      errored = true;
+      assert.deepEqual(error.errors, {
+        name: new Error('Path "name" is required')
+      });
+    }
+    assert.ok(errored);
+
+    // Works
+    new Person({ requireName: true }, { $noRequired: 1 });
+  });
+
   it('required in array', function() {
     const Person = new Archetype({
       names: [{ $type: 'string', $required: true }]

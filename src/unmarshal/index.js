@@ -217,7 +217,11 @@ function checkRequired(obj, schema, projection) {
     if (shouldSkipPath(projection, path) || projection.$noRequired) {
       return;
     }
-    if (!schema._paths[path].$required) {
+    const isRequired = typeof schema._paths[path].$required === 'function' ?
+      schema._paths[path].$required(obj, schema) :
+      schema._paths[path].$required;
+
+    if (!isRequired) {
       return true;
     }
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
