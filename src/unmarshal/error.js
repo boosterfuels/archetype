@@ -7,6 +7,7 @@ class CastError extends Object {
     super();
     this.errors = {};
     this.hasError = false;
+    this.$isArchetypeError = true;
   }
 
   markError(path, error) {
