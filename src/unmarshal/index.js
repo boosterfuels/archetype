@@ -74,7 +74,7 @@ function castDocument(obj, schema, projection) {
   error.merge(checkRequired(obj, schema, projection));
   error.merge(runValidation(obj, schema, projection));
   if (error.hasError) {
-    throw new StandardError(error.toString(), { errors: error.errors });
+    throw error;
   }
   return obj;
 }
