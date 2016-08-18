@@ -1,6 +1,6 @@
 {
   "name": "archetype-js",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "author": "Valeri Karpov <val@boosterfuels.com>",
   "dependencies": {
     "debug": "2.2.0",
