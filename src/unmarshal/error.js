@@ -2,7 +2,7 @@
 
 let _ = require('lodash');
 
-class CastError extends Object {
+class CastError extends Error {
   constructor() {
     super();
     this.errors = {};
@@ -13,6 +13,7 @@ class CastError extends Object {
   markError(path, error) {
     this.errors[path] = error;
     this.hasError = true;
+    this.message = this.toString();
     return this;
   }
 
@@ -24,13 +25,14 @@ class CastError extends Object {
       this.errors[key] = value;
     });
     this.hasError = Object.keys(this.errors).length > 0;
+    this.message = this.toString();
     return this;
   }
 
   toString() {
     let str = [];
     _.each(this.errors, function(value, key) {
-      str.push(`${key}: ${value}`);
+      str.push(`${key}: ${value.message || value}`);
     });
     return str.join(', ');
   }
