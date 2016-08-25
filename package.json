@@ -9,7 +9,7 @@
     "standard-error": "1.1.0"
   },
   "devDependencies": {
-    "acquit": "0.4.0",
+    "acquit": "0.4.1",
     "acquit-ignore": "0.0.3",
     "acquit-markdown": "0.0.2",
     "co": "4.6.0",
