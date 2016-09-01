@@ -315,7 +315,7 @@ function applyDefaults(obj, schema, projection) {
     if (!('$default' in schema._paths[path])) {
       return;
     }
-    if (shouldSkipPath(projection, path)) {
+    if (shouldSkipPath(projection, path) || projection.$noDefaults) {
       return;
     }
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');

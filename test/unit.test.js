@@ -378,6 +378,17 @@ describe('unmarshal()', function() {
     assert.deepEqual(val, { name: 'test' });
   });
 
+  it('no defaults for projecton', function() {
+    const now = Date.now();
+    const Model = new Archetype({
+      name: { $type: 'string', $default: 'test' },
+      createdAt: { $type: Date, $required: true, $default: Date.now }
+    }).compile();
+
+    const val = new Model({}, { $noDefaults: true, $noRequired: true });
+    assert.deepEqual(val, {});
+  });
+
   it('projections', function() {
     const Person = new Archetype({
       name: {
