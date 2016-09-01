@@ -550,4 +550,9 @@ describe('unmarshal()', function() {
       }
     ])
   });
+
+  it('to()', function() {
+    const n = Archetype.to('2', 'number');
+    assert.strictEqual(n, 2)
+  });
 });
