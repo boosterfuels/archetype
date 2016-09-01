@@ -270,7 +270,35 @@ describe('unmarshal()', function() {
     }
     assert.ok(errored);
 
+    errored = false;
+    try {
+      new Person({ name: undefined });
+    } catch(error) {
+      errored = true;
+      assert.deepEqual(error.errors, {
+        name: new Error('Path "name" is required')
+      });
+    }
+    assert.ok(errored);
+
     new Person({}, { $noRequired: 1 });
+  });
+
+  it('required with ObjectIds', function() {
+    const Person = new Archetype({
+      name: { $type: mongodb.ObjectId, $required: true }
+    }).compile();
+
+    let errored = false;
+    try {
+      new Person({ name: undefined });
+    } catch(error) {
+      errored = true;
+      assert.deepEqual(error.errors, {
+        name: new Error('Path "name" is required')
+      });
+    }
+    assert.ok(errored);
   });
 
   it('required function', function() {
