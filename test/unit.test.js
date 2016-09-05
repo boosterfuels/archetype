@@ -206,6 +206,11 @@ describe('unmarshal()', function() {
       assert.deepEqual(error.errors, {
         name: new Error("Error: Could not cast 'Axl Rose' to Object")
       });
+
+      const stringified = JSON.parse(JSON.stringify(error));
+      assert.deepEqual(stringified.errors, {
+        name: new Error("Error: Could not cast 'Axl Rose' to Object")
+      });
     }
     assert.ok(errored);
   });

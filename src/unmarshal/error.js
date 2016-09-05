@@ -1,6 +1,7 @@
 'use strict';
 
-let _ = require('lodash');
+const StandardError = require('standard-error');
+const _ = require('lodash');
 
 class CastError extends Error {
   constructor() {
@@ -11,7 +12,9 @@ class CastError extends Error {
   }
 
   markError(path, error) {
-    this.errors[path] = error;
+    const standardized = new Error(error.message);
+    standardized.stack = error.stack;
+    this.errors[path] = standardized;
     this.hasError = true;
     this.message = this.toString();
     return this;
