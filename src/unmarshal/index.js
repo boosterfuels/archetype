@@ -4,12 +4,14 @@ const Schema = require('../').Schema;
 const StandardError = require('standard-error');
 const ValidateError = require('./error');
 const _ = require('lodash');
+const checkRequired = require('../required');
 const debug = require('debug')('archetype:umarshal');
 const handleCast = require('./util').handleCast;
 const inspect = require('util').inspect;
 const join = require('./util').join;
 const mpath = require('mpath');
 const realPathToSchemaPath = require('./util').realPathToSchemaPath;
+const shouldSkipPath = require('../util').shouldSkipPath;
 
 module.exports = castDocument;
 
@@ -52,14 +54,6 @@ function handleProjection(projection) {
   }
   projection.$inclusive = inclusive;
   return projection;
-}
-
-function shouldSkipPath(projection, path) {
-  if (projection.$inclusive) {
-    return projection[path] != null;
-  } else {
-    return projection[path] == null;
-  }
 }
 
 function castDocument(obj, schema, projection) {
@@ -165,7 +159,7 @@ function visitObject(obj, schema, projection, path) {
       delete obj[key];
       return;
     }
-    const newSchema = schema._paths[newPath]
+    const newSchema = schema._paths[newPath];
     if (newSchema.$type == null) {
       // If type not specified, no type casting
       return;
@@ -210,32 +204,6 @@ function visitObject(obj, schema, projection, path) {
 function handleTerminus(value, key, schema, path) {
   schema = schema._paths[path];
   handleCast(value, key, schema.$type);
-}
-
-function checkRequired(obj, schema, projection) {
-  const error = new ValidateError();
-  _.each(Object.keys(schema._paths), path => {
-    if (shouldSkipPath(projection, path) || projection.$noRequired) {
-      return;
-    }
-    const isRequired = typeof schema._paths[path].$required === 'function' ?
-      schema._paths[path].$required(obj, schema) :
-      schema._paths[path].$required;
-
-    if (!isRequired) {
-      return true;
-    }
-    const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
-    const val = mpath.get(_path, obj);
-    if (Array.isArray(val)) {
-      if (_.some(val, v => v == null)) {
-        error.markError(path, new Error(`Path "${path}" is required`));
-      }
-    } else if (val == null) {
-      error.markError(path, new Error(`Path "${path}" is required`));
-    }
-  });
-  return error;
 }
 
 function runValidation(obj, schema, projection) {
