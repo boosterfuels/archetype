@@ -4,31 +4,51 @@ module.exports = checkRequired;
 
 const ValidateError = require('./unmarshal/error');
 const _ = require('lodash');
+const join = require('./unmarshal/util').join;
 const mpath = require('mpath');
+const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
+
+function checkObject(root, obj, schema, path, error, projection) {
+  if (shouldSkipPath(projection, path) || projection.$noRequired) {
+    return;
+  }
+
+  const fakePath = realPathToSchemaPath(path);
+  if (path) {
+    const schemaPath = schema._paths[fakePath];
+    if (isRequired(root, schemaPath) && obj == null) {
+      return error.markError(path, new Error(`Path "${path}" is required`));
+    }
+  }
+
+  _.each(obj, function(value, key) {
+    const newPath = join(fakePath, key);
+    if (schema._paths[newPath] == null) {
+      return;
+    }
+    if (schema._paths[newPath].$type === Array) {
+      checkObject(root, value, schema, newPath, error, projection);
+    } else if (schema._paths[newPath].$type === Object) {
+      checkObject(root, value, schema, newPath, error, projection);
+    } else if (isRequired(root, newPath) && value == null) {
+      error.markError(newPath, new Error(`Path "${newPath}" is required`));
+    }
+  });
+}
+
+function isRequired(root, schemaPath) {
+  if (!schemaPath) {
+    return false;
+  }
+  if (typeof schemaPath.$required === 'function') {
+    return schemaPath.$required(root);
+  }
+  return schemaPath.$required;
+}
 
 function checkRequired(obj, schema, projection) {
   const error = new ValidateError();
-  _.each(Object.keys(schema._paths), path => {
-    if (shouldSkipPath(projection, path) || projection.$noRequired) {
-      return;
-    }
-    const isRequired = typeof schema._paths[path].$required === 'function' ?
-      schema._paths[path].$required(obj, schema) :
-      schema._paths[path].$required;
-
-    if (!isRequired) {
-      return true;
-    }
-    const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
-    const val = mpath.get(_path, obj);
-    if (Array.isArray(val)) {
-      if (_.some(val, v => v == null)) {
-        error.markError(path, new Error(`Path "${path}" is required`));
-      }
-    } else if (val == null) {
-      error.markError(path, new Error(`Path "${path}" is required`));
-    }
-  });
+  checkObject(obj, obj, schema, '', error, projection);
   return error;
 }
