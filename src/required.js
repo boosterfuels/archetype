@@ -9,32 +9,26 @@ const mpath = require('mpath');
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
 
-function checkObject(root, obj, schema, path, error, projection) {
+function check(root, v, schema, path, error, projection) {
   if (shouldSkipPath(projection, path) || projection.$noRequired) {
     return;
   }
 
   const fakePath = realPathToSchemaPath(path);
-  if (path) {
-    const schemaPath = schema._paths[fakePath];
-    if (isRequired(root, schemaPath) && obj == null) {
-      return error.markError(path, new Error(`Path "${path}" is required`));
-    }
+  const schemaPath = schema._paths[fakePath];
+  if (isRequired(root, schemaPath) && v == null) {
+    return error.markError(path, new Error(`Path "${path}" is required`));
   }
 
-  _.each(obj, function(value, key) {
-    const newPath = join(fakePath, key);
-    if (schema._paths[newPath] == null) {
-      return;
+  if (!path) {
+    _.each(schema._paths, (type, key) => check(root, v[key], schema, join(fakePath, key), error, projection));
+  }
+
+  if (schemaPath) {
+    if (schemaPath.$type === Object && schemaPath.$schema) {
+      _.each(schemaPath.$schema, (value, key) => check(root, value, join(fakePath, key), error, projection));
     }
-    if (schema._paths[newPath].$type === Array) {
-      checkObject(root, value, schema, newPath, error, projection);
-    } else if (schema._paths[newPath].$type === Object) {
-      checkObject(root, value, schema, newPath, error, projection);
-    } else if (isRequired(root, newPath) && value == null) {
-      error.markError(newPath, new Error(`Path "${newPath}" is required`));
-    }
-  });
+  }
 }
 
 function isRequired(root, schemaPath) {
@@ -49,6 +43,6 @@ function isRequired(root, schemaPath) {
 
 function checkRequired(obj, schema, projection) {
   const error = new ValidateError();
-  checkObject(obj, obj, schema, '', error, projection);
+  check(obj, obj, schema, '', error, projection);
   return error;
 }
