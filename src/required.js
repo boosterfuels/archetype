@@ -26,7 +26,7 @@ function check(root, v, schema, path, error, projection) {
 
   if (schemaPath) {
     if (schemaPath.$type === Object && schemaPath.$schema) {
-      _.each(schemaPath.$schema, (value, key) => check(root, value, join(fakePath, key), error, projection));
+      _.each(schemaPath.$schema, (value, key) => check(root, value, schema, join(fakePath, key), error, projection));
     }
   }
 }
