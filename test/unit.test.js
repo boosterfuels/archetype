@@ -341,7 +341,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.$': new Error('Path "names.$" is required')
+        'names.1': new Error('Path "names.1" is required')
       });
     }
     assert.ok(errored);
