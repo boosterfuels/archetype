@@ -21,6 +21,11 @@ class Archetype {
       Object.defineProperty(type, 'name', { value: name });
     }
     type.paths = () => this.paths();
+
+    type.path = (path, props) => this.path(path, props);
+    type.omit = path => this.omit(path);
+    type.transform = fn => this.transform(fn);
+
     return type;
   }
 
@@ -32,8 +37,23 @@ class Archetype {
     if (!props) {
       return _.get(this._obj, path);
     }
-    _.set(this._obj, path, props);
-    return this;
+    const newSchema = new Archetype(this._obj);
+    _.set(newSchema._obj, path, props);
+    return newSchema;
+  }
+
+  omit(path) {
+    const newSchema = new Archetype(this._obj);
+    _.unset(newSchema._obj, path);
+    return newSchema;
+  }
+
+  transform(fn) {
+    const newSchema = new Archetype(this._obj);
+    _.each(Object.keys(newSchema._obj), key => {
+      newSchema._obj[key] = fn(key, newSchema._obj[key]);
+    });
+    return newSchema;
   }
 
   paths() {

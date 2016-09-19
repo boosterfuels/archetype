@@ -1,6 +1,7 @@
 'use strict';
 
 const Archetype = require('../');
+const _ = require('lodash');
 const assert = require('assert');
 const mongodb = require('mongodb');
 
@@ -571,4 +572,47 @@ describe('unmarshal()', function() {
     const n = Archetype.to('2', 'number');
     assert.strictEqual(n, 2)
   });
+});
+
+describe('schema modifications', function() {
+  it('path() adds new paths', function() {
+    const Test = new Archetype({
+      str: 'string'
+    }).compile();
+
+    const Test2 = Test.path('num', { $type: 'number' }).compile('Test2');
+    assert.deepEqual(new Test2({ str: 123, num: '123' }), {
+      str: '123',
+      num: 123
+    });
+  });
+
+  it('omit() removes paths', function() {
+    const Test = new Archetype({
+      str: 'string',
+      num: 'number'
+    }).compile();
+
+    const Test2 = Test.omit('num').compile('Test2');
+    assert.deepEqual(new Test2({ str: 123, num: '123' }), {
+      str: '123'
+    });
+  });
+
+  it('transform() loops over top-level paths and transforms them', function () {
+    const Test = new Archetype({
+      str: { $type: 'string', $required: true },
+      num: { $type: 'number', $required: true }
+    }).compile();
+
+    const Test2 = Test.transform((path, props) => {
+      if (path === 'num') {
+        delete props.$required;
+      }
+      return props;
+    }).compile('Test2');
+
+    // Should work
+    new Test2({ str: '123' });
+  })
 });
