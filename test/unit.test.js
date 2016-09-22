@@ -95,8 +95,8 @@ describe('schema', function() {
     });
 
     assert.ok(!schema.path('_id'));
-    schema.path('_id', { $type: 'number' });
-    assert.deepEqual(schema.path('_id'), { $type: 'number' });
+    const newSchema = schema.path('_id', { $type: 'number' });
+    assert.deepEqual(newSchema.path('_id'), { $type: 'number' });
   });
 
   it('arrays with $type', function() {
