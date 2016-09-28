@@ -148,6 +148,31 @@ describe('unmarshal()', function() {
     assert.ok(res instanceof Person);
   });
 
+  it('only casts if necessary', function() {
+    const Person = new Archetype({
+      _id: { $type: mongodb.ObjectId },
+      name: { $type: 'string' },
+      born: { $type: 'number' }
+    }).compile();
+
+    const axl = {
+      _id: new mongodb.ObjectId('000000000000000000000001'),
+      name: 'Axl Rose',
+      born: 1962
+    };
+
+    const res = new Person(axl);
+
+    assert.deepEqual(res, {
+      _id: new mongodb.ObjectId('000000000000000000000001'),
+      name: 'Axl Rose',
+      born: 1962
+    });
+    assert.ok(res instanceof Person);
+    assert.ok(res._id instanceof mongodb.ObjectId);
+    assert.equal(res._id.toHexString(), '000000000000000000000001');
+  });
+
   it('casts into arrays', function() {
     let Band = new Archetype({
       members: [{ $type: mongodb.ObjectId }]
