@@ -117,7 +117,7 @@ function visitArray(arr, schema, projection, path) {
     }
 
     try {
-      handleTerminus(arr, index, schema, newPath);
+      handleCast(arr, index, schema._paths[newPath].$type);
     } catch(err) {
       error.markError(join(path, index, true), err);
     }
@@ -189,7 +189,7 @@ function visitObject(obj, schema, projection, path) {
     }
 
     try {
-      handleTerminus(obj, key, schema, newPath);
+      handleCast(obj, key, schema._paths[newPath].$type);
     } catch(err) {
       error.markError(join(path, key, true), err);
     }
@@ -199,11 +199,6 @@ function visitObject(obj, schema, projection, path) {
     value: obj,
     error: (error.hasError ? error : null)
   };
-}
-
-function handleTerminus(value, key, schema, path) {
-  schema = schema._paths[path];
-  handleCast(value, key, schema.$type);
 }
 
 function runValidation(obj, schema, projection) {
