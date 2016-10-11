@@ -624,6 +624,18 @@ describe('schema modifications', function() {
     });
   });
 
+  it('pick() creates a new schema with a subset of paths', function() {
+    const Test = new Archetype({
+      str: 'string',
+      num: 'number'
+    }).compile();
+
+    const Test2 = Test.pick('num').compile('Test2');
+    assert.deepEqual(new Test2({ str: 123, num: '123' }), {
+      num: 123
+    });
+  });
+
   it('transform() loops over top-level paths and transforms them', function () {
     const Test = new Archetype({
       str: { $type: 'string', $required: true },

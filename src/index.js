@@ -24,6 +24,7 @@ class Archetype {
 
     type.path = (path, props) => this.path(path, props);
     type.omit = path => this.omit(path);
+    type.pick = paths => this.pick(paths);
     type.transform = fn => this.transform(fn);
 
     return type;
@@ -45,6 +46,11 @@ class Archetype {
   omit(path) {
     const newSchema = new Archetype(this._obj);
     _.unset(newSchema._obj, path);
+    return newSchema;
+  }
+
+  pick(paths) {
+    const newSchema = new Archetype(_.pick(this._obj, paths))
     return newSchema;
   }
 
