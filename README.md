@@ -20,7 +20,7 @@ const Person = new Archetype({
     $type: moment,
     $default: () => moment()
   }
-}).compile('Person')
+}).compile('Person');
 
 const test = new Person({
   name: 'test',
