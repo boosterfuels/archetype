@@ -62,7 +62,6 @@ function castDocument(obj, schema, projection) {
   if (obj == null) {
     throw new Error(`Can't cast null or undefined`);
   }
-  obj = _.cloneDeep(obj);
   applyDefaults(obj, schema, projection);
   const error = new ValidateError();
   error.merge(visitObject(obj, schema, projection, '').error);

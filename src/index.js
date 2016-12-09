@@ -13,7 +13,7 @@ class Archetype {
     const _this = this;
     this._paths = visitor(this._obj);
     const type = function(obj, projection) {
-      Object.assign(this, unmarshal(obj, _this, projection));
+      Object.assign(this, unmarshal(_.cloneDeep(obj), _this, projection));
     };
     type.schema = this;
     if (name) {
@@ -50,7 +50,7 @@ class Archetype {
   }
 
   pick(paths) {
-    const newSchema = new Archetype(_.pick(this._obj, paths))
+    const newSchema = new Archetype(_.pick(this._obj, paths));
     return newSchema;
   }
 
