@@ -13,6 +13,9 @@ class Archetype {
     const _this = this;
     this._paths = visitor(this._obj);
     const type = function(obj, projection) {
+      if (!(this instanceof type)) {
+        return new type(obj, projection);
+      }
       Object.assign(this, unmarshal(_.cloneDeep(obj), _this, projection));
     };
     type.schema = this;

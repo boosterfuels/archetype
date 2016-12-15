@@ -45,3 +45,10 @@ try {
 ```
 
 Archetypes are composable, inspectable, and extendable via `extends`.
+
+The returned function can be called without "new" keyword
+
+```javascript
+const Person = new Archetype({name: 'string'}).compile('Person');
+const p = Person({name: 'test'});
+```
