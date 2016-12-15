@@ -535,6 +535,13 @@ describe('unmarshal()', function() {
     assert.equal(new Person({}).constructor.name, 'PersonModel');
   });
 
+  it('compiled function can be called without "new" keyword', function() {
+    const Person = new Archetype({
+      name: 'string'
+    }).compile('Person');
+    assert.ok(Person({}) instanceof Person);
+  });
+
   it('validation with arrays and nested objects', function() {
     const Band = new Archetype({
       name: 'string',
