@@ -11,7 +11,7 @@ const CAST_PRIMITIVES = {
     if (Number.isNaN(res)) {
       throw new Error(`Could not cast "${v}" to number`);
     }
-    return res
+    return res;
   },
   string: v => {
     if (v == null) {
@@ -43,7 +43,7 @@ function to(v, type) {
       throw new Error(`"${type}" is not a valid primitive type`);
     }
     if (v == null) {
-      return
+      return;
     }
     if (typeof v === type) {
       return v;
