@@ -604,6 +604,13 @@ describe('unmarshal()', function() {
     const n = Archetype.to('2', 'number');
     assert.strictEqual(n, 2)
   });
+
+  it('handles NaN', function() {
+    const Test = new Archetype({ num: 'number' }).compile('Test');
+    assert.throws(function() {
+      new Test({ num: 'a' * 2 });
+    }, /to number/);
+  });
 });
 
 describe('schema modifications', function() {

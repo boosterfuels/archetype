@@ -45,6 +45,10 @@ function to(v, type) {
     if (v == null) {
       return;
     }
+
+    if (type === 'number' && Number.isNaN(v)) {
+      return CAST_PRIMITIVES[type](v);
+    }
     if (typeof v === type) {
       return v;
     }
