@@ -35,7 +35,7 @@ If casting fails, archetype throws a nice clean exception:
 
 ```javascript
 try {
-  new Person({
+  Person({ // <-- calling with `new` is optional
     name: 'test',
     bandId: 'ImNotAValidObjectId'
   });
@@ -44,11 +44,4 @@ try {
 }
 ```
 
-Archetypes are composable, inspectable, and extendable via `extends`.
-
-The returned function can be called without "new" keyword
-
-```javascript
-const Person = new Archetype({name: 'string'}).compile('Person');
-const p = Person({name: 'test'});
-```
+[Archetypes are composable, inspectable, and extendable via `extends`.](http://thecodebarbarian.com/casting-mongodb-queries-with-archetype.html)
