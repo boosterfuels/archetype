@@ -6,8 +6,8 @@ Archetype is a runtime type-casting library. Its purpose is to compose
 types from existing types in a way that's easy to write and document.
 
 ```javascript
-const { ObjectId } = require('mongodb')
-const moment = require('moment')
+const { ObjectId } = require('mongodb');
+const moment = require('moment');
 
 // `Person` is now a constructor
 const Person = new Archetype({
