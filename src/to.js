@@ -7,6 +7,12 @@ const CAST_PRIMITIVES = {
     if (v == null) {
       return v;
     }
+
+    // Nasty edge case: Number converts '', ' ', and `{ toString: () => '' }` to 0
+    if (typeof v !== 'number' && v.toString().trim() === '') {
+      throw new Error(`Could not cast "${v}" to number`);
+    }
+
     const res = Number(v).valueOf();
     if (Number.isNaN(res)) {
       throw new Error(`Could not cast "${v}" to number`);

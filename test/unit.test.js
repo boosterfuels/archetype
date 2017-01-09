@@ -611,6 +611,13 @@ describe('unmarshal()', function() {
       new Test({ num: 'a' * 2 });
     }, /to number/);
   });
+
+  it('handles casting whitespace to number', function() {
+    const Test = new Archetype({ num: 'number' }).compile('Test');
+    assert.throws(function() {
+      new Test({ num: '   ' });
+    }, /to number/);
+  });
 });
 
 describe('schema modifications', function() {
