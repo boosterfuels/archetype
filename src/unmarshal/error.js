@@ -12,7 +12,7 @@ class CastError extends Error {
   }
 
   markError(path, error) {
-    const standardized = new Error(error.message);
+    const standardized = new StandardError(error.message);
     standardized.stack = error.stack;
     this.errors[path] = standardized;
     this.hasError = true;

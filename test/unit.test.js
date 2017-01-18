@@ -1,6 +1,7 @@
 'use strict';
 
 const Archetype = require('../');
+const StandardError = require('standard-error');
 const _ = require('lodash');
 const assert = require('assert');
 const mongodb = require('mongodb');
@@ -230,12 +231,12 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: new Error("Error: Could not cast 'Axl Rose' to Object")
+        name: new StandardError("Could not cast 'Axl Rose' to Object")
       });
 
       const stringified = JSON.parse(JSON.stringify(error));
       assert.deepEqual(stringified.errors, {
-        name: new Error("Error: Could not cast 'Axl Rose' to Object")
+        name: new StandardError("Could not cast 'Axl Rose' to Object")
       });
     }
     assert.ok(errored);
@@ -267,7 +268,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.0': new Error("Error: Could not cast 'Axl Rose' to Object")
+        'names.0': new StandardError("Could not cast 'Axl Rose' to Object")
       });
     }
     assert.ok(errored);
@@ -296,7 +297,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: new Error('Path "name" is required')
+        name: new StandardError('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -307,7 +308,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: new Error('Path "name" is required')
+        name: new StandardError('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -326,7 +327,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: new Error('Path "name" is required')
+        name: new StandardError('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -347,7 +348,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: new Error('Path "name" is required')
+        name: new StandardError('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -367,7 +368,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.1': new Error('Path "names.1" is required')
+        'names.1': new StandardError('Path "names.1" is required')
       });
     }
     assert.ok(errored);
