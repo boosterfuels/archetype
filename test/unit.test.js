@@ -619,6 +619,15 @@ describe('unmarshal()', function() {
       new Test({ num: '   ' });
     }, /to number/);
   });
+
+  it('required underneath array', function() {
+    const Test = new Archetype({
+      products: [{ name: { $type: 'string', $required: true } }]
+    }).compile('Test');
+    assert.throws(function() {
+      new Test({ products: [{ name: null }] });
+    }, /required/);
+  });
 });
 
 describe('schema modifications', function() {
