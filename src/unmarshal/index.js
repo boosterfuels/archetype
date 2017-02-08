@@ -31,6 +31,7 @@ function handleProjection(projection) {
     return { $inclusive: true };
   }
   projection = _.cloneDeep(projection);
+  projection.$hasExclusiveChild = {};
   let inclusive = null;
   for (const key of Object.keys(projection)) {
     if (key.startsWith('$')) {
@@ -40,7 +41,7 @@ function handleProjection(projection) {
       if (inclusive === true) {
         throw new Error("Can't mix inclusive and exclusive in projection");
       }
-      markSubpaths(projection, key, projection[key]);
+      markSubpaths(projection.$hasExclusiveChild, key, projection[key]);
       inclusive = false;
     } else {
       if (inclusive === false) {
@@ -54,6 +55,7 @@ function handleProjection(projection) {
     inclusive = true;
   }
   projection.$inclusive = inclusive;
+
   return projection;
 }
 
@@ -156,6 +158,7 @@ function visitObject(obj, schema, projection, path) {
     let newPath = join(fakePath, key);
     debug('visit', key);
     if (!schema._paths[newPath] || shouldSkipPath(projection, newPath)) {
+      debug('delete', key, shouldSkipPath(projection, newPath));
       delete obj[key];
       return;
     }
