@@ -628,6 +628,20 @@ describe('unmarshal()', function() {
       new Test({ products: [{ name: null }] });
     }, /required/);
   });
+
+  it('object array under projection', function() {
+    const Test = new Archetype({
+      name: 'string',
+      arr: {
+        $type: [{ el: { $type: 'string' } }],
+        $required: true
+      }
+    }).compile('Test');
+
+    assert.deepEqual(new Test({ name: '1', arr: [{ el: '2' }]}, { arr: 1 }), {
+      arr: [{ el: '2' }]
+    });
+  });
 });
 
 describe('schema modifications', function() {
