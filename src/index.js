@@ -29,6 +29,7 @@ class Archetype {
     type.omit = path => this.omit(path);
     type.pick = paths => this.pick(paths);
     type.transform = fn => this.transform(fn);
+    type.eachPath = fn => this.eachPath(fn);
 
     return type;
   }
@@ -65,10 +66,23 @@ class Archetype {
 
   _transform(fn, obj, path) {
     _.each(Object.keys(obj), key => {
+      obj[key] = fn(path.concat([key]).join('.'), obj[key]);
       if (typeof obj[key] === 'object' && obj[key] && !('$type' in obj[key])) {
         this._transform(fn, obj[key], path.concat([key]));
       }
-      obj[key] = fn(path.concat([key]).join('.'), obj[key]);
+    });
+  }
+
+  eachPath(fn) {
+    this._eachPath(fn, this._obj, []);
+  }
+
+  _eachPath(fn, obj, path) {
+    _.each(Object.keys(obj), key => {
+      fn(path.concat([key]).join('.'), obj[key]);
+      if (typeof obj[key] === 'object' && obj[key] && !('$type' in obj[key])) {
+        this._eachPath(fn, obj[key], path.concat([key]));
+      }
     });
   }
 

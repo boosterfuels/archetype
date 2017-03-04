@@ -716,4 +716,20 @@ describe('schema modifications', function() {
     // Should work
     new Test2({ nested: { str: '123' } });
   });
+
+  it('eachPath() loops over nested paths', function () {
+    const Test = new Archetype({
+      nested: {
+        str: { $type: 'string', $required: true },
+        num: { $type: 'number', $required: true }
+      }
+    }).compile();
+
+    const arr = [];
+    Test.eachPath(path => {
+      arr.push(path);
+    });
+
+    assert.deepEqual(arr, ['nested', 'nested.str', 'nested.num']);
+  });
 });
