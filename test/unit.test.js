@@ -696,5 +696,24 @@ describe('schema modifications', function() {
 
     // Should work
     new Test2({ str: '123' });
-  })
+  });
+
+  it('transform() loops over nested paths and transforms them', function () {
+    const Test = new Archetype({
+      nested: {
+        str: { $type: 'string', $required: true },
+        num: { $type: 'number', $required: true }
+      }
+    }).compile();
+
+    const Test2 = Test.transform((path, props) => {
+      if (path === 'nested.num') {
+        delete props.$required;
+      }
+      return props;
+    }).compile('Test2');
+
+    // Should work
+    new Test2({ nested: { str: '123' } });
+  });
 });

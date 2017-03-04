@@ -59,10 +59,17 @@ class Archetype {
 
   transform(fn) {
     const newSchema = new Archetype(this._obj);
-    _.each(Object.keys(newSchema._obj), key => {
-      newSchema._obj[key] = fn(key, newSchema._obj[key]);
-    });
+    newSchema._transform(fn, newSchema._obj, []);
     return newSchema;
+  }
+
+  _transform(fn, obj, path) {
+    _.each(Object.keys(obj), key => {
+      if (typeof obj[key] === 'object' && obj[key] && !('$type' in obj[key])) {
+        this._transform(fn, obj[key], path.concat([key]));
+      }
+      obj[key] = fn(path.concat([key]).join('.'), obj[key]);
+    });
   }
 
   paths() {
