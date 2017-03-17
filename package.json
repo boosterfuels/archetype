@@ -1,6 +1,6 @@
 {
   "name": "archetype-js",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": "Valeri Karpov <val@boosterfuels.com>",
   "dependencies": {
     "debug": "2.6.3",
@@ -17,7 +17,8 @@
     "gulp-mocha": "2.0.1",
     "istanbul": "0.4.2",
     "mocha": "2.2.4",
-    "mongodb": "~2.2"
+    "mongodb": "~2.2",
+    "standard-changelog": "1.0.1"
   },
   "engines": {
     "node": ">= 4.0.0"
@@ -29,6 +30,7 @@
     "url": "git://github.com/vkarpov15/archetype-js.git"
   },
   "scripts": {
+    "changelog": "standard-changelog -i CHANGELOG.md -w",
     "coverage": "istanbul cover _mocha -- test/*.test.js",
     "docs": "node docs.js",
     "test": "mocha test/*.test.js"
