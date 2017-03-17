@@ -80,13 +80,6 @@ function visitArray(arr, schema, projection, path) {
   let error = new ValidateError();
   let curPath = realPathToSchemaPath(path);
   let newPath = join(curPath, '$');
-  if (!schema._paths[newPath] || !schema._paths[newPath].$type) {
-    debug('skipping', newPath);
-    return {
-      value: arr,
-      error: null
-    };
-  }
 
   if (arr == null) {
     return {
@@ -97,6 +90,14 @@ function visitArray(arr, schema, projection, path) {
 
   if (!Array.isArray(arr)) {
     arr = [arr];
+  }
+
+  if (!schema._paths[newPath] || !schema._paths[newPath].$type) {
+    debug('skipping', newPath);
+    return {
+      value: arr,
+      error: null
+    };
   }
 
   debug('newPath', newPath, schema._paths[newPath].$type);

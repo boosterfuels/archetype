@@ -190,6 +190,15 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('boolean to array', function() {
+    let Band = new Archetype({
+      test: { $type: Array }
+    }).compile();
+
+    const res = new Band({ test: true });
+    assert.deepEqual(res.test, [true]);
+  });
+
   it('casts deeply nested arrays', function() {
     const Graph = new Archetype({
       points: [[{ $type: 'number' }]]
