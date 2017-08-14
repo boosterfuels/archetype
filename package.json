@@ -16,7 +16,7 @@
     "gulp": "3.8.11",
     "gulp-mocha": "2.0.1",
     "istanbul": "0.4.2",
-    "mocha": "2.2.4",
+    "mocha": "3.5.0",
     "mongodb": "~2.2",
     "standard-changelog": "1.0.1"
   },
