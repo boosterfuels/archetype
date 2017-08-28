@@ -152,3 +152,4 @@ function join(path, key) {
 }
 
 exports.Archetype = Archetype;
+exports.CastError = require('./unmarshal/error');
