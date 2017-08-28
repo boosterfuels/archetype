@@ -1,6 +1,6 @@
 # archetype
 
-[![Build Status](https://travis-ci.org/vkarpov15/archetype-js.svg?branch=master)](https://travis-ci.org/vkarpov15/archetype-js)
+[![CircleCI](https://circleci.com/gh/boosterfuels/archetype.svg?style=svg)](https://circleci.com/gh/boosterfuels/archetype)
 
 Archetype is a runtime type-casting library. Its purpose is to compose
 types from existing types in a way that's easy to write and document.
