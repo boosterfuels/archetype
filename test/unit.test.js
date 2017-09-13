@@ -600,14 +600,26 @@ describe('unmarshal()', function() {
 
     assert.deepEqual(Test.paths().filter(v => !v.$description), [
       { path: 'str', $type: 'string' }
-    ])
+    ]);
     assert.deepEqual(Test.paths().filter(v => !!v.$description), [
       {
         path: 'num',
         $type: 'number',
         $description: 'this is a number'
       }
-    ])
+    ]);
+  });
+
+  it('$transform', function() {
+    const Test = new Archetype({
+      str: {
+        $type: Object,
+        $transform: JSON.parse
+      }
+    }).compile();
+
+    const doc = new Test({ str: JSON.stringify({ hello: 'world' }) });
+    assert.deepEqual(doc.str, { hello: 'world' });
   });
 
   it('to()', function() {

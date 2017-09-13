@@ -120,7 +120,8 @@ function visitArray(arr, schema, projection, path) {
     }
 
     try {
-      handleCast(arr, index, schema._paths[newPath].$type);
+      const pathOptions = schema._paths[newPath];
+      handleCast(arr, index, pathOptions.$type, pathOptions.$transform);
     } catch(err) {
       error.markError(join(path, index, true), err);
     }
@@ -168,8 +169,9 @@ function visitObject(obj, schema, projection, path) {
       // If type not specified, no type casting
       return;
     }
+    const pathOptions = schema._paths[newPath];
 
-    if (schema._paths[newPath].$type === Array ||
+    if (pathOptions.$type === Array ||
         Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, newPath);
       if (res.error) {
@@ -178,10 +180,13 @@ function visitObject(obj, schema, projection, path) {
       }
       obj[key] = res.value;
       return;
-    } else if (schema._paths[newPath].$type === Object) {
+    } else if (pathOptions.$type === Object) {
       if (value == null) {
         delete obj[key];
         return;
+      }
+      if (pathOptions.$transform != null) {
+        value = pathOptions.$transform(obj[key]);
       }
       let res = visitObject(value, schema, projection, newPath);
       if (res.error) {
@@ -193,7 +198,7 @@ function visitObject(obj, schema, projection, path) {
     }
 
     try {
-      handleCast(obj, key, schema._paths[newPath].$type);
+      handleCast(obj, key, pathOptions.$type, pathOptions.$transform);
     } catch(err) {
       error.markError(join(path, key, true), err);
     }
