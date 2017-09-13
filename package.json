@@ -27,7 +27,7 @@
   "main": "./index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/vkarpov15/archetype-js.git"
+    "url": "git://github.com/boosterfuels/archetype.git"
   },
   "scripts": {
     "changelog": "standard-changelog -i CHANGELOG.md -w",
