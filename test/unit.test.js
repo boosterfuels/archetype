@@ -600,14 +600,61 @@ describe('unmarshal()', function() {
 
     assert.deepEqual(Test.paths().filter(v => !v.$description), [
       { path: 'str', $type: 'string' }
-    ])
+    ]);
     assert.deepEqual(Test.paths().filter(v => !!v.$description), [
       {
         path: 'num',
         $type: 'number',
         $description: 'this is a number'
       }
-    ])
+    ]);
+  });
+
+  it('$transform', function() {
+    const Test = new Archetype({
+      str: {
+        $type: Object,
+        $transform: JSON.parse
+      },
+      nums: {
+        $type: ['number'],
+        $transform: JSON.parse
+      },
+      objs: {
+        $type: [{ $type: Object, $transform: JSON.parse }]
+      }
+    }).compile();
+
+    const doc = new Test({
+      str: JSON.stringify({ hello: 'world' }),
+      nums: JSON.stringify([1, 2, 3]),
+      objs: [JSON.stringify({ a: 1 }), JSON.stringify({ b: 2 })]
+    });
+    assert.deepEqual(doc, {
+      str: { hello: 'world' },
+      nums: [1, 2, 3],
+      objs: [{ a: 1 }, { b: 2 }]
+    });
+  });
+
+  it('$transform errors', function() {
+    const Test = new Archetype({
+      str: {
+        $type: Object,
+        $transform: JSON.parse
+      }
+    }).compile();
+
+    let threw = false;
+    try {
+      new Test({
+        str: { already: 'object' }
+      });
+    } catch (error) {
+      assert.ok(error.errors['str']);
+      threw = true;
+    }
+    assert.ok(threw);
   });
 
   it('to()', function() {

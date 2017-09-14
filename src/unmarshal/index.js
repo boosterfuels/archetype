@@ -102,7 +102,17 @@ function visitArray(arr, schema, projection, path) {
 
   debug('newPath', newPath, schema._paths[newPath].$type);
   arr.forEach(function(value, index) {
-    if (schema._paths[newPath].$type === Array ||
+    const pathOptions = schema._paths[newPath];
+    if (pathOptions.$transform != null) {
+      try {
+        arr[index] = pathOptions.$transform(arr[index]);
+      } catch (err) {
+        error.markError(`newPath.${index}`, err);
+        return;
+      }
+      value = arr[index];
+    }
+    if (pathOptions.$type === Array ||
         Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, join(path, index, true));
       if (res.error) {
@@ -110,7 +120,7 @@ function visitArray(arr, schema, projection, path) {
       }
       arr[index] = res.value;
       return;
-    } else if (schema._paths[newPath].$type === Object) {
+    } else if (pathOptions.$type === Object) {
       let res = visitObject(value, schema, projection, join(path, index, true));
       if (res.error) {
         error.merge(res.error);
@@ -120,7 +130,7 @@ function visitArray(arr, schema, projection, path) {
     }
 
     try {
-      handleCast(arr, index, schema._paths[newPath].$type);
+      handleCast(arr, index, pathOptions.$type, pathOptions.$transform);
     } catch(err) {
       error.markError(join(path, index, true), err);
     }
@@ -164,12 +174,22 @@ function visitObject(obj, schema, projection, path) {
       return;
     }
     const newSchema = schema._paths[newPath];
+    const pathOptions = schema._paths[newPath];
+    if (pathOptions.$transform != null) {
+      try {
+        obj[key] = pathOptions.$transform(obj[key]);
+      } catch (err) {
+        error.markError(newPath, err);
+        return;
+      }
+      value = obj[key];
+    }
     if (newSchema.$type == null) {
       // If type not specified, no type casting
       return;
     }
 
-    if (schema._paths[newPath].$type === Array ||
+    if (pathOptions.$type === Array ||
         Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, newPath);
       if (res.error) {
@@ -178,7 +198,7 @@ function visitObject(obj, schema, projection, path) {
       }
       obj[key] = res.value;
       return;
-    } else if (schema._paths[newPath].$type === Object) {
+    } else if (pathOptions.$type === Object) {
       if (value == null) {
         delete obj[key];
         return;
@@ -193,7 +213,7 @@ function visitObject(obj, schema, projection, path) {
     }
 
     try {
-      handleCast(obj, key, schema._paths[newPath].$type);
+      handleCast(obj, key, pathOptions.$type, pathOptions.$transform);
     } catch(err) {
       error.markError(join(path, key, true), err);
     }

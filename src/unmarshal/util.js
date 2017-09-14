@@ -2,8 +2,11 @@
 
 const to = require('../to');
 
-exports.handleCast = function(obj, key, type) {
-  obj[key] = to(obj[key], type);
+const noop = x => x;
+
+exports.handleCast = function(obj, key, type, transform) {
+  transform = transform == null ? noop : transform;
+  obj[key] = to(transform(obj[key]), type);
 };
 
 exports.realPathToSchemaPath = function(path) {
