@@ -615,11 +615,26 @@ describe('unmarshal()', function() {
       str: {
         $type: Object,
         $transform: JSON.parse
+      },
+      nums: {
+        $type: ['number'],
+        $transform: JSON.parse
+      },
+      objs: {
+        $type: [{ $type: Object, $transform: JSON.parse }]
       }
     }).compile();
 
-    const doc = new Test({ str: JSON.stringify({ hello: 'world' }) });
-    assert.deepEqual(doc.str, { hello: 'world' });
+    const doc = new Test({
+      str: JSON.stringify({ hello: 'world' }),
+      nums: JSON.stringify([1, 2, 3]),
+      objs: [JSON.stringify({ a: 1 }), JSON.stringify({ b: 2 })]
+    });
+    assert.deepEqual(doc, {
+      str: { hello: 'world' },
+      nums: [1, 2, 3],
+      objs: [{ a: 1 }, { b: 2 }]
+    });
   });
 
   it('to()', function() {
