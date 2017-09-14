@@ -104,7 +104,12 @@ function visitArray(arr, schema, projection, path) {
   arr.forEach(function(value, index) {
     const pathOptions = schema._paths[newPath];
     if (pathOptions.$transform != null) {
-      arr[index] = pathOptions.$transform(arr[index]);
+      try {
+        arr[index] = pathOptions.$transform(arr[index]);
+      } catch (err) {
+        error.markError(`newPath.${index}`, err);
+        return;
+      }
       value = arr[index];
     }
     if (pathOptions.$type === Array ||
@@ -171,7 +176,12 @@ function visitObject(obj, schema, projection, path) {
     const newSchema = schema._paths[newPath];
     const pathOptions = schema._paths[newPath];
     if (pathOptions.$transform != null) {
-      obj[key] = pathOptions.$transform(obj[key]);
+      try {
+        obj[key] = pathOptions.$transform(obj[key]);
+      } catch (err) {
+        error.markError(newPath, err);
+        return;
+      }
       value = obj[key];
     }
     if (newSchema.$type == null) {

@@ -637,6 +637,26 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('$transform errors', function() {
+    const Test = new Archetype({
+      str: {
+        $type: Object,
+        $transform: JSON.parse
+      }
+    }).compile();
+
+    let threw = false;
+    try {
+      new Test({
+        str: { already: 'object' }
+      });
+    } catch (error) {
+      assert.ok(error.errors['str']);
+      threw = true;
+    }
+    assert.ok(threw);
+  });
+
   it('to()', function() {
     const n = Archetype.to('2', 'number');
     assert.strictEqual(n, 2)
