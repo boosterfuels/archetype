@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const { matchType } = require('../');
+const matchType = require('../').matchType;
 
 describe('matchType', function() {
   it('works with JSON.parse()', function() {
