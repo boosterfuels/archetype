@@ -1,0 +1,16 @@
+machine:
+  timezone: America/Los_Angeles
+  node:
+    version: 6.9.0
+  environment:
+    NODE_ENV: local
+  services:
+    - docker
+
+dependencies:
+  override:
+    - npm install
+
+test:
+  override:
+    - npm test
