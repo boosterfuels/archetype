@@ -4,7 +4,6 @@ module.exports = applyDefaults;
 
 const _ = require('lodash');
 const join = require('./unmarshal/util').join;
-const mpath = require('mpath');
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
 

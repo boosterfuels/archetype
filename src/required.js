@@ -5,7 +5,6 @@ module.exports = checkRequired;
 const ValidateError = require('./unmarshal/error');
 const _ = require('lodash');
 const join = require('./unmarshal/util').join;
-const mpath = require('mpath');
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
 
