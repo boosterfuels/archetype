@@ -1,9 +1,10 @@
 # archetype
 
-[![CircleCI](https://circleci.com/gh/boosterfuels/archetype.svg?style=svg)](https://circleci.com/gh/boosterfuels/archetype)
+<img src="https://i.imgur.com/TW4rq2f.png">
 
-Archetype is a runtime type-casting library. Its purpose is to compose
-types from existing types in a way that's easy to write and document.
+Archetype is a library for casting and validating objects. It has exceptional support for deeply nested objects, type composition, custom types, and geoJSON.
+
+[![CircleCI](https://circleci.com/gh/boosterfuels/archetype.svg?style=svg)](https://circleci.com/gh/boosterfuels/archetype)
 
 ```javascript
 const { ObjectId } = require('mongodb');
