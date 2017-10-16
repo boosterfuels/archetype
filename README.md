@@ -46,3 +46,10 @@ try {
 ```
 
 [Archetypes are composable, inspectable, and extendable via `extends`.](http://thecodebarbarian.com/casting-mongodb-queries-with-archetype.html)
+
+## Connect
+
+Follow [archetype on Twitter](https://twitter.com/archetype_js) for updates, including our gists of the week. Here's some older gists of the week:
+
+* [20171013](https://gist.github.com/vkarpov15/1520cfb604972e81198db028e4606809)
+* [20171006](https://gist.github.com/vkarpov15/e03dafb2ac478cb38ff3fbe4c36139d6)
