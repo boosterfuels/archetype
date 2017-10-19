@@ -725,6 +725,19 @@ describe('schema modifications', function() {
     });
   });
 
+  it('omit() multiple paths', function() {
+    const Test = new Archetype({
+      str: 'string',
+      num: 'number',
+      bool: 'boolean'
+    }).compile();
+
+    const Test2 = Test.omit(['num', 'str']).compile('Test2');
+    assert.deepEqual(new Test2({ str: 123, num: '123', bool: 'yes' }), {
+      bool: true
+    });
+  });
+
   it('pick() creates a new schema with a subset of paths', function() {
     const Test = new Archetype({
       str: 'string',

@@ -47,9 +47,15 @@ class Archetype {
     return newSchema;
   }
 
-  omit(path) {
+  omit(paths) {
     const newSchema = new Archetype(this._obj);
-    _.unset(newSchema._obj, path);
+    if (Array.isArray(paths)) {
+      for (const path of paths) {
+        _.unset(newSchema._obj, path);
+      }
+    } else {
+      _.unset(newSchema._obj, paths);
+    }
     return newSchema;
   }
 
