@@ -1,3 +1,13 @@
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/boosterfuels/archetype/compare/v0.8.0...v0.8.1) (2017-10-19)
+
+
+### Bug Fixes
+
+* handle passing array of paths to `Type.omit()` ([0cfc96f](https://github.com/boosterfuels/archetype/commit/0cfc96f))
+
+
+
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/boosterfuels/archetype/compare/v0.7.0...v0.8.0) (2017-09-21)
 
