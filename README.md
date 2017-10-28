@@ -51,6 +51,7 @@ try {
 
 Follow [archetype on Twitter](https://twitter.com/archetype_js) for updates, including our gists of the week. Here's some older gists of the week:
 
+* 20171027: [Custom Types with Archetype](https://gist.github.com/vkarpov15/d4cbd7941b40346741cf791d379001e5)
 * 20171020: [Embedding a Subset of One Archetype's Properties in another Archetype](https://gist.github.com/vkarpov15/0dc21e98acfb96e72d0bb9b602adb3ad)
 * 20171013: [Embedded Objects vs Embedded Types in Archetype](https://gist.github.com/vkarpov15/1520cfb604972e81198db028e4606809)
 * 20171006: [Consistent Arrays from Query Params with Express and Archetype](https://gist.github.com/vkarpov15/e03dafb2ac478cb38ff3fbe4c36139d6)
