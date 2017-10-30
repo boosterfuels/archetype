@@ -15,9 +15,7 @@ describe('schema', function() {
           $type: 'number'
         }
       }
-    });
-
-    schema.compile();
+    }).compile();
 
     assert.deepEqual(schema._paths, {
       test: { $type: 'number' },
