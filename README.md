@@ -51,6 +51,7 @@ try {
 
 Follow [archetype on Twitter](https://twitter.com/archetype_js) for updates, including our gists of the week. Here's some older gists of the week:
 
+* 20171110: [Configuring Custom Validators for Individual Paths in Archetype](https://gist.github.com/vkarpov15/dcf7c490c69e625764c0dc1453555524)
 * 20171103: [Conditionally Required Properties with Archetype](https://gist.github.com/vkarpov15/b4a9cb225699b3bf852c3fa8ca2c56e2)
 * 20171027: [Custom Types with Archetype](https://gist.github.com/vkarpov15/d4cbd7941b40346741cf791d379001e5)
 * 20171020: [Embedding a Subset of One Archetype's Properties in another Archetype](https://gist.github.com/vkarpov15/0dc21e98acfb96e72d0bb9b602adb3ad)
