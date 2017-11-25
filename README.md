@@ -51,6 +51,8 @@ try {
 
 Follow [archetype on Twitter](https://twitter.com/archetype_js) for updates, including our gists of the week. Here's some older gists of the week:
 
+* 20171124: [Embedding Only Certain Fields in an Embedded Archetype](https://gist.github.com/vkarpov15/37622608b33eb144acfda5d3ad936be6)
+* 20171117: [Async/Await with Archetype](https://gist.github.com/vkarpov15/f10b560468f49166bcc14c6e41bb755e)
 * 20171110: [Configuring Custom Validators for Individual Paths in Archetype](https://gist.github.com/vkarpov15/dcf7c490c69e625764c0dc1453555524)
 * 20171103: [Conditionally Required Properties with Archetype](https://gist.github.com/vkarpov15/b4a9cb225699b3bf852c3fa8ca2c56e2)
 * 20171027: [Custom Types with Archetype](https://gist.github.com/vkarpov15/d4cbd7941b40346741cf791d379001e5)
