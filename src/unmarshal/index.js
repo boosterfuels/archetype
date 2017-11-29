@@ -101,8 +101,8 @@ function visitArray(arr, schema, projection, path) {
   }
 
   debug('newPath', newPath, schema._paths[newPath].$type);
+  const pathOptions = schema._paths[newPath];
   arr.forEach(function(value, index) {
-    const pathOptions = schema._paths[newPath];
     if (pathOptions.$transform != null) {
       try {
         arr[index] = pathOptions.$transform(arr[index]);
@@ -130,7 +130,7 @@ function visitArray(arr, schema, projection, path) {
     }
 
     try {
-      handleCast(arr, index, pathOptions.$type, pathOptions.$transform);
+      handleCast(arr, index, pathOptions.$type);
     } catch(err) {
       error.markError(join(path, index, true), err);
     }
