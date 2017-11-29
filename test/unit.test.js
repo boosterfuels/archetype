@@ -637,6 +637,29 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('$transform', function() {
+    const Name = new Archetype({
+      first: { $type: 'string' },
+      last: { $type: 'string' }
+    }).compile('Name');
+    const Test = new Archetype({
+      names: [{ $type: Name, $transform: JSON.parse }]
+    }).compile();
+
+    const doc = new Test({
+      names: [
+        JSON.stringify({ first: 'James', last: 'Kirk' }),
+        JSON.stringify({ first: 'Leonard', last: 'McCoy' })
+      ]
+    });
+    assert.deepEqual(doc, {
+      names: [
+        { first: 'James', last: 'Kirk' },
+        { first: 'Leonard', last: 'McCoy' }
+      ]
+    });
+  });
+
   it('$transform errors', function() {
     const Test = new Archetype({
       str: {
