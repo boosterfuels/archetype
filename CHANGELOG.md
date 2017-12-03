@@ -1,3 +1,13 @@
+<a name="0.8.2"></a>
+## [0.8.2](https://github.com/boosterfuels/archetype/compare/v0.8.1...v0.8.2) (2017-12-03)
+
+
+### Bug Fixes
+
+* **unmarshal:** don't use $transform on array if nested in child element ([78bc272](https://github.com/boosterfuels/archetype/commit/78bc272)), closes [#13](https://github.com/boosterfuels/archetype/issues/13)
+
+
+
 <a name="0.8.1"></a>
 ## [0.8.1](https://github.com/boosterfuels/archetype/compare/v0.8.0...v0.8.1) (2017-10-19)
 
