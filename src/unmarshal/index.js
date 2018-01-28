@@ -234,10 +234,11 @@ function runValidation(obj, schema, projection) {
       return;
     }
 
+    const typeProps = schema._paths[path];
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
     const val = mpath.get(_path, obj);
 
-    if (!schema._paths[path].$validate && !schema._paths[path].$enum) {
+    if (typeProps.$validate != null && typeProps.$enum != null) {
       debug(`No validation for "${path}"`);
       return true;
     }
@@ -246,32 +247,32 @@ function runValidation(obj, schema, projection) {
       return;
     }
 
-    if (Array.isArray(schema._paths[path].$enum)) {
+    if (Array.isArray(typeProps.$enum)) {
       if (Array.isArray(val)) {
         _.each(val, (val, index) => {
-          if (schema._paths[path].$enum.indexOf(val) === -1) {
+          if (typeProps.$enum.indexOf(val) === -1) {
             const msg = `Value "${val}" invalid, allowed values are ` +
-              `"${inspect(schema._paths[path].$enum)}"`;
+              `"${inspect(typeProps.$enum)}"`;
             error.markError([path, index].join('.'), new Error(msg));
             return;
           }
         });
       } else {
-        if (schema._paths[path].$enum.indexOf(val) === -1) {
+        if (typeProps.$enum.indexOf(val) === -1) {
           const msg = `Value "${val}" invalid, allowed values are ` +
-            `"${inspect(schema._paths[path].$enum)}"`;
+            `"${inspect(typeProps.$enum)}"`;
           error.markError(path, new Error(msg));
           return;
         }
       }
     }
 
-    if (schema._paths[path].$validate) {
+    if (typeProps.$validate != null) {
       if (Array.isArray(val)) {
         if (path.indexOf('$') === -1) {
           debug(`Path "${path}" is plain array`);
           try {
-            schema._paths[path].$validate(val, schema._paths[path], obj);
+            typeProps.$validate(val, { typeProps: typeProps, doc: obj });
           } catch(_error) {
             error.markError(path, _error);
           }
@@ -279,7 +280,7 @@ function runValidation(obj, schema, projection) {
           debug(`Validate each element for "${path}"`);
           _.each(val, (val, index) => {
             try {
-              schema._paths[path].$validate(val, schema._paths[path], obj);
+              typeProps.$validate(val, { typeProps: typeProps, doc: obj });
             } catch(_error) {
               error.markError(`${path}.${index}`, _error);
             }
@@ -287,7 +288,7 @@ function runValidation(obj, schema, projection) {
         }
       } else {
         try {
-          schema._paths[path].$validate(val, schema._paths[path], obj);
+          typeProps.$validate(val, { typeProps: typeProps, doc: obj });
         } catch(_error) {
           error.markError(path, _error);
         }

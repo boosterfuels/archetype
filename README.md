@@ -47,6 +47,18 @@ try {
 
 [Archetypes are composable, inspectable, and extendable via `extends`.](http://thecodebarbarian.com/casting-mongodb-queries-with-archetype.html)
 
+## Type Properties
+
+Archetype uses nested objects to describe the properties that are allowed in
+an object. A key that starts with `$` identifies an object as a _type description_.
+The following type properties are supported:
+
+* `$type`: the type to cast `value` to
+* `$required`: if falsy, `null` and `undefined` are valid values for this path. If true, `null` and `undefined` are not allowed. Can also handle a function `$required: doc => {}`. If the `$required` function returns falsy, `null` and `undefined` are valid, otherwise they are not.
+* `$default`: use this value instead if this path is `null` or `undefined`. If `$default` is a function `$default: doc => {}`, archetype will use the return value of the function.
+* `$validate`: executes a function that validates `value`. If this function throws, archetype will report an error for this path. Function signature is `$validate: (v, { typeProps, doc }) => {}`
+* `$enum`: lists valid values for this path, modulo `null` and `undefined` if `$required` is falsy.
+
 ## Connect
 
 Follow [archetype on Twitter](https://twitter.com/archetype_js) for updates, including our gists of the week. Here's some older gists of the week:
