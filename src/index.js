@@ -25,7 +25,7 @@ class Archetype {
     }
     type.paths = () => this.paths();
 
-    type.path = (path, props) => this.path(path, props);
+    type.path = (path, props, opts) => this.path(path, props, opts);
     type.omit = path => this.omit(path);
     type.pick = paths => this.pick(paths);
     type.transform = fn => this.transform(fn);
@@ -38,9 +38,13 @@ class Archetype {
     return this._obj;
   }
 
-  path(path, props) {
+  path(path, props, options) {
     if (!props) {
       return _.get(this._obj, path);
+    }
+    if (_.get(options, 'inPlace')) {
+      _.set(this._obj, path, props);
+      return this;
     }
     const newSchema = new Archetype(this._obj);
     _.set(newSchema._obj, path, props);

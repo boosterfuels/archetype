@@ -342,6 +342,31 @@ describe('unmarshal()', function() {
     assert.ok(errored);
   });
 
+  it('recursive', function() {
+    let NodeType = new Archetype({
+      value: { $type: null }
+    }).compile('NodeType');
+    NodeType.
+      path('left', { $type: NodeType }, { inPlace: true }).
+      path('right', { $type: NodeType }, { inPlace: true }).
+      compile('NodeType');
+
+    const raw = {
+      value: 'root',
+      left: {
+        value: 'left'
+      },
+      right: {
+        left: {
+          value: 'right->left'
+        },
+        value: 'right'
+      }
+    };
+    assert.deepEqual(raw, new NodeType(raw));
+    assert.equal(raw.right.left.value, 'right->left');
+  });
+
   it('required function', function() {
     const Person = new Archetype({
       requireName: 'boolean',
@@ -634,6 +659,29 @@ describe('unmarshal()', function() {
       str: { hello: 'world' },
       nums: [1, 2, 3],
       objs: [{ a: 1 }, { b: 2 }]
+    });
+  });
+
+  it('$transform', function() {
+    const Name = new Archetype({
+      first: { $type: 'string' },
+      last: { $type: 'string' }
+    }).compile('Name');
+    const Test = new Archetype({
+      names: [{ $type: Name, $transform: JSON.parse }]
+    }).compile();
+
+    const doc = new Test({
+      names: [
+        JSON.stringify({ first: 'James', last: 'Kirk' }),
+        JSON.stringify({ first: 'Leonard', last: 'McCoy' })
+      ]
+    });
+    assert.deepEqual(doc, {
+      names: [
+        { first: 'James', last: 'Kirk' },
+        { first: 'Leonard', last: 'McCoy' }
+      ]
     });
   });
 
