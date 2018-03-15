@@ -9,15 +9,15 @@
     "standard-error": "1.1.0"
   },
   "devDependencies": {
-    "acquit": "0.4.1",
+    "acquit": "0.6.1",
     "acquit-ignore": "0.0.3",
-    "acquit-markdown": "0.0.2",
+    "acquit-markdown": "0.0.8",
     "co": "4.6.0",
     "gulp": "3.8.11",
     "gulp-mocha": "2.0.1",
     "istanbul": "0.4.2",
     "mocha": "3.5.0",
-    "mongodb": "~2.2",
+    "mongodb": "~3.0",
     "standard-changelog": "1.0.1"
   },
   "engines": {
