@@ -1,3 +1,13 @@
+<a name="0.8.3"></a>
+## [0.8.3](https://github.com/boosterfuels/archetype/compare/v0.8.2...v0.8.3) (2018-03-21)
+
+
+### Features
+
+* support inPlace updates for recursive schemas ([8f61d32](https://github.com/boosterfuels/archetype/commit/8f61d32)), closes [#11](https://github.com/boosterfuels/archetype/issues/11)
+
+
+
 <a name="0.8.2"></a>
 ## [0.8.2](https://github.com/boosterfuels/archetype/compare/v0.8.1...v0.8.2) (2017-12-03)
 
