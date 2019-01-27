@@ -9,7 +9,7 @@ const shouldSkipPath = require('./util').shouldSkipPath;
 
 function applyDefaults(obj, schema, projection) {
   _.each(Object.keys(schema._obj), key => {
-    const def = defaults(obj, obj[key], schema, key, projection)
+    const def = defaults(obj, obj[key], schema, key, projection);
     if (def !== void 0 && obj[key] == null) {
       obj[key] = def;
     }
@@ -33,12 +33,20 @@ function defaults(root, v, schema, path, projection) {
   }
 
   if (schemaPath.$type === Object && schemaPath.$schema) {
-    _.each(schemaPath.$schema, (value, key) => {
-      const def = defaults(root, _.get(v, key), schema, join(fakePath, key), projection);
+    _.each(schemaPath.$schema, (childSchemaPath, key) => {
+      const fullPath = join(fakePath, key);
+      const value = _.get(v, key);
+      // Might have nested defaults even if this level isn't nullish
+      const def = defaults(root, value, schema, fullPath, projection);
       if (def !== void 0 && value == null) {
+        if (v == null) {
+          v = {};
+        }
         v[key] = def;
       }
     });
+
+    return v;
   }
   if (schemaPath.$type === Array) {
     _.each(v || [], (value, index) => {
@@ -47,6 +55,8 @@ function defaults(root, v, schema, path, projection) {
         v[index] = def;
       }
     });
+
+    return v;
   }
 }
 

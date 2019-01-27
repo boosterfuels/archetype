@@ -433,6 +433,36 @@ describe('unmarshal()', function() {
     assert.ok(val.createdAt.getTime() >= now, `${val.createdAt}, ${now}`);
   });
 
+  it('deep defaults', function() {
+    const C = new Archetype({
+      firstName: {
+        $type: 'string',
+        $default: () => 'test'
+      },
+      name: {
+        first: {
+          $type: 'string',
+          $default: () => 'test'
+        }
+      },
+      multiple: {
+        a: {
+          $type: 'string',
+          $default: () => 'test'
+        },
+        b: {
+          $type: 'string'
+        }
+      }
+    }).compile('c');
+
+    let v = new C({ multiple: { b: 'foo' } });
+    assert.equal(v.firstName, 'test');
+    assert.equal(v.name.first, 'test');
+    assert.equal(v.multiple.a, 'test');
+    assert.equal(v.multiple.b, 'foo');
+  });
+
   it('no defaults for projecton', function() {
     const now = Date.now();
     const Model = new Archetype({
