@@ -49,7 +49,7 @@ function to(v, type) {
       throw new Error(`"${type}" is not a valid primitive type`);
     }
     if (v == null) {
-      return;
+      return v;
     }
 
     if (type === 'number' && Number.isNaN(v)) {
