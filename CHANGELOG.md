@@ -1,3 +1,14 @@
+<a name="0.8.4"></a>
+## [0.8.4](https://github.com/boosterfuels/archetype/compare/v0.8.3...v0.8.4) (2019-01-27)
+
+
+### Bug Fixes
+
+* **defaults:** handle nested defaults correctly ([c02b89b](https://github.com/boosterfuels/archetype/commit/c02b89b)), closes [#16](https://github.com/boosterfuels/archetype/issues/16)
+* **to:** dont convert null -> undefined when casting strings ([92faef2](https://github.com/boosterfuels/archetype/commit/92faef2))
+
+
+
 <a name="0.8.3"></a>
 ## [0.8.3](https://github.com/boosterfuels/archetype/compare/v0.8.2...v0.8.3) (2018-03-21)
 

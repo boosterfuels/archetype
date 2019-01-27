@@ -1,6 +1,6 @@
 {
   "name": "archetype",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "author": "Valeri Karpov <val@boosterfuels.com>",
   "dependencies": {
     "debug": "2.6.3",
