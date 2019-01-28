@@ -1,3 +1,8 @@
+<a name="0.8.6"></a>
+## [0.8.6](https://github.com/boosterfuels/archetype/compare/v0.8.5...v0.8.6) (2019-01-28)
+
+
+
 <a name="0.8.4"></a>
 ## [0.8.4](https://github.com/boosterfuels/archetype/compare/v0.8.3...v0.8.4) (2019-01-27)
 
