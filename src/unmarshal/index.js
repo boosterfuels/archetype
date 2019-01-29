@@ -6,7 +6,6 @@ const ValidateError = require('./error');
 const _ = require('lodash');
 const applyDefaults = require('../defaults');
 const checkRequired = require('../required');
-const debug = require('debug')('archetype:umarshal');
 const handleCast = require('./util').handleCast;
 const inspect = require('util').inspect;
 const join = require('./util').join;
@@ -76,7 +75,6 @@ function castDocument(obj, schema, projection) {
 }
 
 function visitArray(arr, schema, projection, path) {
-  debug('visitArray', arr, path, schema);
   let error = new ValidateError();
   let curPath = realPathToSchemaPath(path);
   let newPath = join(curPath, '$');
@@ -93,14 +91,12 @@ function visitArray(arr, schema, projection, path) {
   }
 
   if (!schema._paths[newPath] || !schema._paths[newPath].$type) {
-    debug('skipping', newPath);
     return {
       value: arr,
       error: null
     };
   }
 
-  debug('newPath', newPath, schema._paths[newPath].$type);
   const pathOptions = schema._paths[newPath];
   arr.forEach(function(value, index) {
     if (pathOptions.$transform != null) {
@@ -143,7 +139,6 @@ function visitArray(arr, schema, projection, path) {
 }
 
 function visitObject(obj, schema, projection, path) {
-  debug('visitObject', obj, schema, projection, path);
   let error = new ValidateError();
   if (typeof obj !== 'object' || Array.isArray(obj)) {
     let err = new Error('Could not cast ' + require('util').inspect(obj) +
@@ -156,7 +151,6 @@ function visitObject(obj, schema, projection, path) {
   }
 
   let fakePath = realPathToSchemaPath(path);
-  debug('fakePath', fakePath, obj);
   const curSchema = schema._paths[fakePath];
   if (fakePath && !curSchema.$schema) {
     return {
@@ -167,9 +161,7 @@ function visitObject(obj, schema, projection, path) {
 
   _.each(obj, function(value, key) {
     let newPath = join(fakePath, key);
-    debug('visit', key);
     if (!schema._paths[newPath] || shouldSkipPath(projection, newPath)) {
-      debug('delete', key, shouldSkipPath(projection, newPath));
       delete obj[key];
       return;
     }
@@ -193,7 +185,6 @@ function visitObject(obj, schema, projection, path) {
         Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, newPath);
       if (res.error) {
-        debug('merge', res.error.errors);
         error.merge(res.error);
       }
       obj[key] = res.value;
@@ -205,7 +196,6 @@ function visitObject(obj, schema, projection, path) {
       }
       let res = visitObject(value, schema, projection, newPath);
       if (res.error) {
-        debug('merge', res.error.errors);
         error.merge(res.error);
       }
       obj[key] = res.value;
@@ -228,9 +218,7 @@ function visitObject(obj, schema, projection, path) {
 function runValidation(obj, schema, projection) {
   const error = new ValidateError();
   _.each(Object.keys(schema._paths), path => {
-    debug(`Checking validation for "${path}"`);
     if (shouldSkipPath(projection, path)) {
-      debug(`Skip validation for "${path}"`);
       return;
     }
 
@@ -238,7 +226,6 @@ function runValidation(obj, schema, projection) {
     const val = mpath.get(_path, obj);
 
     if (!schema._paths[path].$validate && !schema._paths[path].$enum) {
-      debug(`No validation for "${path}"`);
       return true;
     }
 
@@ -269,14 +256,12 @@ function runValidation(obj, schema, projection) {
     if (schema._paths[path].$validate) {
       if (Array.isArray(val)) {
         if (path.indexOf('$') === -1) {
-          debug(`Path "${path}" is plain array`);
           try {
             schema._paths[path].$validate(val, schema._paths[path], obj);
           } catch(_error) {
             error.markError(path, _error);
           }
         } else {
-          debug(`Validate each element for "${path}"`);
           _.each(val, (val, index) => {
             try {
               schema._paths[path].$validate(val, schema._paths[path], obj);
