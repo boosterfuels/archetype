@@ -1,3 +1,13 @@
+<a name="0.8.7"></a>
+## [0.8.7](https://github.com/boosterfuels/archetype/compare/v0.8.6...v0.8.7) (2019-01-29)
+
+
+### Bug Fixes
+
+* clean up unnecessary _.each() usage ([ab32c15](https://github.com/boosterfuels/archetype/commit/ab32c15))
+
+
+
 <a name="0.8.6"></a>
 ## [0.8.6](https://github.com/boosterfuels/archetype/compare/v0.8.5...v0.8.6) (2019-01-28)
 
