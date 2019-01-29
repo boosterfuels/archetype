@@ -1,11 +1,15 @@
 'use strict';
 
 const _ = require('lodash');
+const cloneDeep = require('lodash.clonedeep');
+const get = require('./get');
+const set = require('lodash.set');
 const unmarshal = require('./unmarshal');
+const unset = require('lodash.unset');
 
 class Archetype {
   constructor(obj) {
-    this._obj = _.cloneDeep(obj);
+    this._obj = cloneDeep(obj);
     this._paths = {};
   }
 
@@ -16,7 +20,7 @@ class Archetype {
       if (!(this instanceof type)) {
         return new type(obj, projection);
       }
-      Object.assign(this, unmarshal(_.cloneDeep(obj), _this, projection));
+      Object.assign(this, unmarshal(cloneDeep(obj), _this, projection));
     };
     type.schema = this;
     if (name) {
@@ -40,14 +44,14 @@ class Archetype {
 
   path(path, props, options) {
     if (!props) {
-      return _.get(this._obj, path);
+      return get(this._obj, path);
     }
-    if (_.get(options, 'inPlace')) {
-      _.set(this._obj, path, props);
+    if (get(options, 'inPlace')) {
+      set(this._obj, path, props);
       return this;
     }
     const newSchema = new Archetype(this._obj);
-    _.set(newSchema._obj, path, props);
+    set(newSchema._obj, path, props);
     return newSchema;
   }
 
@@ -55,16 +59,21 @@ class Archetype {
     const newSchema = new Archetype(this._obj);
     if (Array.isArray(paths)) {
       for (const path of paths) {
-        _.unset(newSchema._obj, path);
+        unset(newSchema._obj, path);
       }
     } else {
-      _.unset(newSchema._obj, paths);
+      unset(newSchema._obj, paths);
     }
     return newSchema;
   }
 
   pick(paths) {
-    const newSchema = new Archetype(_.pick(this._obj, paths));
+    const obj = {};
+    paths = Array.isArray(paths) ? paths : [paths];
+    for (const path of paths) {
+      obj[path] = this._obj[paths];
+    }
+    const newSchema = new Archetype(obj);
     return newSchema;
   }
 
@@ -75,7 +84,7 @@ class Archetype {
   }
 
   _transform(fn, obj, path) {
-    _.each(Object.keys(obj), key => {
+    Object.keys(obj).forEach(key => {
       obj[key] = fn(path.concat([key]).join('.'), obj[key]);
       if (typeof obj[key] === 'object' && obj[key] && !('$type' in obj[key])) {
         this._transform(fn, obj[key], path.concat([key]));
@@ -88,7 +97,7 @@ class Archetype {
   }
 
   _eachPath(fn, obj, path) {
-    _.each(Object.keys(obj), key => {
+    Object.keys(obj).forEach(key => {
       fn(path.concat([key]).join('.'), obj[key]);
       if (typeof obj[key] === 'object' && obj[key] && !('$type' in obj[key])) {
         this._eachPath(fn, obj[key], path.concat([key]));
@@ -97,8 +106,8 @@ class Archetype {
   }
 
   paths() {
-    return _.map(Object.keys(this._paths),
-      path => Object.assign({}, this._paths[path], { path }));
+    return Object.keys(this._paths).
+      map(path => Object.assign({}, this._paths[path], { path }));
   }
 
   unmarshal(obj, projection) {
@@ -133,7 +142,13 @@ function visitObject(obj, path, paths) {
   if ('$type' in obj) {
     if (Array.isArray(obj.$type)) {
       visitArray(obj.$type, path, paths);
-      Object.assign(paths[path], _.omit(obj, '$type'));
+      const withoutType = Object.keys(obj).
+        filter(key => key !== '$type').
+        reduce((clone, key) => {
+          clone[key] = obj[key];
+          return clone;
+        }, {});
+      Object.assign(paths[path], withoutType);
       return;
     }
     paths[path] = obj;
@@ -143,7 +158,8 @@ function visitObject(obj, path, paths) {
   if (path) {
     paths[path] = { $type: Object, $schema: obj };
   }
-  _.each(obj, function(value, key) {
+  Object.keys(obj).forEach(function(key) {
+    const value = obj[key];
     if (Array.isArray(value)) {
       visitArray(value, join(path, key), paths);
     } else if (typeof value === 'object') {

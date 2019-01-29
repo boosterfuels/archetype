@@ -3,9 +3,9 @@
 const Schema = require('../').Schema;
 const StandardError = require('standard-error');
 const ValidateError = require('./error');
-const _ = require('lodash');
 const applyDefaults = require('../defaults');
 const checkRequired = require('../required');
+const cloneDeep = require('lodash.clonedeep');
 const handleCast = require('./util').handleCast;
 const inspect = require('util').inspect;
 const join = require('./util').join;
@@ -29,7 +29,7 @@ function handleProjection(projection) {
   if (!projection) {
     return { $inclusive: true };
   }
-  projection = _.cloneDeep(projection);
+  projection = cloneDeep(projection);
   projection.$hasExclusiveChild = {};
   let inclusive = null;
   for (const key of Object.keys(projection)) {
@@ -159,7 +159,8 @@ function visitObject(obj, schema, projection, path) {
     };
   }
 
-  _.each(obj, function(value, key) {
+  Object.keys(obj).forEach(function(key) {
+    let value = obj[key];
     let newPath = join(fakePath, key);
     if (!schema._paths[newPath] || shouldSkipPath(projection, newPath)) {
       delete obj[key];
