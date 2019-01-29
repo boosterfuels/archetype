@@ -1,7 +1,6 @@
 'use strict';
 
 const StandardError = require('standard-error');
-const _ = require('lodash');
 
 class CastError extends Error {
   constructor() {
@@ -24,9 +23,9 @@ class CastError extends Error {
     if (!error) {
       return this;
     }
-    _.each(error.errors, (value, key) => {
-      this.errors[key] = value;
-    });
+    for (const key of Object.keys(error.errors || {})) {
+      this.errors[key] = error.errors[key];
+    }
     this.hasError = Object.keys(this.errors).length > 0;
     this.message = this.toString();
     return this;
@@ -34,9 +33,9 @@ class CastError extends Error {
 
   toString() {
     let str = [];
-    _.each(this.errors, function(value, key) {
-      str.push(`${key}: ${value.message || value}`);
-    });
+    for (const key of Object.keys(this.errors)) {
+      str.push(`${key}: ${this.errors[key].message || value}`);
+    }
     return str.join(', ');
   }
 }

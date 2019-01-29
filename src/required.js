@@ -3,7 +3,7 @@
 module.exports = checkRequired;
 
 const ValidateError = require('./unmarshal/error');
-const _ = require('lodash');
+const get = require('./get');
 const join = require('./unmarshal/util').join;
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
@@ -20,13 +20,20 @@ function check(root, v, schema, path, error, projection) {
   }
 
   if (!path) {
-    _.each(schema._obj, (type, key) => check(root, v[key], schema, join(fakePath, key), error, projection));
+    for (const key of Object.keys(schema._obj)) {
+      check(root, v[key], schema, join(fakePath, key), error, projection);
+    }
   } else if (schemaPath) {
     if (schemaPath.$type === Object && schemaPath.$schema) {
-      _.each(schemaPath.$schema, (value, key) => check(root, _.get(v, key), schema, join(fakePath, key), error, projection));
-    }
-    if (schemaPath.$type === Array) {
-      _.each(v || [], (value, index) => check(root, value, schema, join(fakePath, index.toString()), error, projection));
+      for (const key of Object.keys(schemaPath.$schema)) {
+        check(root, get(v, key), schema, join(fakePath, key), error, projection);
+      }
+    } else if (schemaPath.$type === Array) {
+      const arr = v || [];
+      for (let index = 0; index < arr.length; ++index) {
+        check(root, arr[index], schema, join(fakePath, index.toString()),
+          error, projection);
+      }
     }
   }
 }

@@ -2,7 +2,6 @@
 
 const Archetype = require('../');
 const StandardError = require('standard-error');
-const _ = require('lodash');
 const assert = require('assert');
 const mongodb = require('mongodb');
 

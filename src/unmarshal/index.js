@@ -217,39 +217,35 @@ function visitObject(obj, schema, projection, path) {
 
 function runValidation(obj, schema, projection) {
   const error = new ValidateError();
-  _.each(Object.keys(schema._paths), path => {
+  for (const path of Object.keys(schema._paths)) {
     if (shouldSkipPath(projection, path)) {
-      return;
+      continue;
     }
 
     const _path = path.replace(/\.\$\./g, '.').replace(/\.\$$/g, '');
     const val = mpath.get(_path, obj);
-
     if (!schema._paths[path].$validate && !schema._paths[path].$enum) {
-      return true;
+      continue;
     }
 
     if (val == null) {
-      return;
+      continue;
     }
 
     if (Array.isArray(schema._paths[path].$enum)) {
       if (Array.isArray(val)) {
-        _.each(val, (val, index) => {
+        val.forEach((val, index) => {
           if (schema._paths[path].$enum.indexOf(val) === -1) {
             const msg = `Value "${val}" invalid, allowed values are ` +
               `"${inspect(schema._paths[path].$enum)}"`;
             error.markError([path, index].join('.'), new Error(msg));
-            return;
           }
         });
-      } else {
-        if (schema._paths[path].$enum.indexOf(val) === -1) {
-          const msg = `Value "${val}" invalid, allowed values are ` +
-            `"${inspect(schema._paths[path].$enum)}"`;
-          error.markError(path, new Error(msg));
-          return;
-        }
+      } else if (schema._paths[path].$enum.indexOf(val) === -1) {
+        const msg = `Value "${val}" invalid, allowed values are ` +
+          `"${inspect(schema._paths[path].$enum)}"`;
+        error.markError(path, new Error(msg));
+        continue;
       }
     }
 
@@ -262,7 +258,7 @@ function runValidation(obj, schema, projection) {
             error.markError(path, _error);
           }
         } else {
-          _.each(val, (val, index) => {
+          val.forEach((val, index) => {
             try {
               schema._paths[path].$validate(val, schema._paths[path], obj);
             } catch(_error) {
@@ -278,6 +274,6 @@ function runValidation(obj, schema, projection) {
         }
       }
     }
-  });
+  }
   return error;
 }
