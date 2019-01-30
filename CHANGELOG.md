@@ -1,3 +1,13 @@
+<a name="0.8.8"></a>
+## [0.8.8](https://github.com/boosterfuels/archetype/compare/v0.8.7...v0.8.8) (2019-01-30)
+
+
+### Bug Fixes
+
+* remove leftover reference to lodash ([34c6519](https://github.com/boosterfuels/archetype/commit/34c6519))
+
+
+
 <a name="0.8.7"></a>
 ## [0.8.7](https://github.com/boosterfuels/archetype/compare/v0.8.6...v0.8.7) (2019-01-29)
 
