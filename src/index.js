@@ -1,6 +1,5 @@
 'use strict';
 
-const _ = require('lodash');
 const cloneDeep = require('lodash.clonedeep');
 const get = require('./get');
 const set = require('lodash.set');
