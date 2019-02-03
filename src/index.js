@@ -3,6 +3,7 @@
 const cloneDeep = require('lodash.clonedeep');
 const get = require('./get');
 const set = require('lodash.set');
+const specialProperties = require('./specialProperties');
 const unmarshal = require('./unmarshal');
 
 class Archetype {
@@ -179,6 +180,9 @@ function unset(obj, path) {
   const pieces = path.split('.');
   let i = 0;
   for (i = 0; i < pieces.length - 1; ++i) {
+    if (specialProperties.has(pieces[i])) {
+      continue;
+    }
     if (obj == null) {
       return;
     }
