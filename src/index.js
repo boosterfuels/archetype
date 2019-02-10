@@ -15,26 +15,44 @@ class Archetype {
   compile(name) {
     const _this = this;
     this._paths = visitor(this._obj);
-    const type = function(obj, projection) {
-      if (!(this instanceof type)) {
-        return new type(obj, projection);
+
+    class Type {
+      constructor(obj, projection) {
+        Object.assign(this, unmarshal(cloneDeep(obj), _this, projection));
       }
-      Object.assign(this, unmarshal(cloneDeep(obj), _this, projection));
-    };
-    type.schema = this;
-    if (name) {
-      type.toString = () => name;
-      Object.defineProperty(type, 'name', { value: name });
+
+      static paths() {
+        return _this.paths();
+      }
+
+      static path(path, props, opts) {
+        return _this.path(path, props, opts);
+      }
+
+      static omit(paths) {
+        return _this.omit(paths);
+      }
+
+      static pick(paths) {
+        return _this.pick(paths);
+      }
+
+      static transform(fn) {
+        return _this.transform(fn);
+      }
+
+      static eachPath(fn) {
+        return _this.eachPath(fn);
+      }
     }
-    type.paths = () => this.paths();
 
-    type.path = (path, props, opts) => this.path(path, props, opts);
-    type.omit = path => this.omit(path);
-    type.pick = paths => this.pick(paths);
-    type.transform = fn => this.transform(fn);
-    type.eachPath = fn => this.eachPath(fn);
+    Type.schema = this;
+    if (name != null) {
+      Type.toString = () => name;
+      Object.defineProperty(Type, 'name', { value: name });
+    }
 
-    return type;
+    return Type;
   }
 
   json() {

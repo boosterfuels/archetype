@@ -544,11 +544,14 @@ describe('unmarshal()', function() {
     assert.equal(new Person({}).constructor.name, 'PersonModel');
   });
 
-  it('compiled function can be called without "new" keyword', function() {
-    const Person = new Archetype({
-      name: 'string'
-    }).compile('Person');
-    assert.ok(Person({}) instanceof Person);
+  it('handles inheritance correctly with path(), etc.', function() {
+    const ABase = new Archetype({ x: { $type: 'string' } }).compile('ABase');
+
+    class A extends ABase {}
+
+    const B = A.path('y', { $type: 'string' }).compile('B');
+
+    assert.deepEqual(new B({ x: 1, y: 2 }), { x: '1', y: '2' });
   });
 
   it('validation with arrays and nested objects', function() {
