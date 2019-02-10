@@ -1,5 +1,7 @@
 'use strict';
 
+const Any = require('./symbols').Any;
+
 module.exports = to;
 
 const CAST_PRIMITIVES = {
@@ -35,6 +37,10 @@ const CAST_PRIMITIVES = {
 
 function to(v, type) {
   if (v == null) {
+    return v;
+  }
+
+  if (type === Any) {
     return v;
   }
 

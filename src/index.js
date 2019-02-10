@@ -168,6 +168,11 @@ function visitObject(obj, path, paths) {
       Object.assign(paths[path], withoutType);
       return;
     }
+
+    if (obj.$type == null) {
+      throw new Error(`Path ${path} has nullish $type. Use Archetype.Any to skip casting`);
+    }
+
     paths[path] = obj;
     return;
   }

@@ -38,7 +38,7 @@ describe('schema', function() {
     assert.deepEqual(schema._paths, {
       'test': { $type: 'number' },
       'arrMixed': { $type: Array },
-      'arrMixed.$': { $type: Archetype.Any },
+      'arrMixed.$': { $type: null },
       'arrPlain': { $type: Array },
       'arrPlain.$': { $type: 'number' },
       'arrNested': { $type: Array },
@@ -252,7 +252,7 @@ describe('unmarshal()', function() {
 
   it('ignores if $type not specified', function() {
     const Band = new Archetype({
-      members: { $lookUp: { ref: 'Test' }, $type: null },
+      members: { $lookUp: { ref: 'Test' }, $type: Archetype.Any },
       tags: { $type: Array }
     }).compile();
 
@@ -343,7 +343,7 @@ describe('unmarshal()', function() {
 
   it('recursive', function() {
     let NodeType = new Archetype({
-      value: { $type: null }
+      value: { $type: 'string' }
     }).compile('NodeType');
     NodeType.
       path('left', { $type: NodeType }, { inPlace: true }).
