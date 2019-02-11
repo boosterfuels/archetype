@@ -1,13 +1,15 @@
 'use strict';
 
+const getOwnProperty = require('./helpers/getOwnProperty');
+
 exports.shouldSkipPath = function(projection, path) {
   if (projection.$inclusive) {
-    return projection[path] != null;
+    return getOwnProperty(projection, path) != null;
   } else {
     const parts = path.split('.');
     let cur = parts[0];
     for (let i = 0; i < parts.length - 1; ++i) {
-      if (projection[cur] != null) {
+      if (getOwnProperty(projection, cur) != null) {
         return false;
       }
       cur += '.' + parts[i + 1];

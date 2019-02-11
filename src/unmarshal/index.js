@@ -162,7 +162,7 @@ function visitObject(obj, schema, projection, path) {
   Object.keys(obj).forEach(function(key) {
     let value = obj[key];
     let newPath = join(fakePath, key);
-    if (!schema._paths[newPath] || shouldSkipPath(projection, newPath)) {
+    if (!schema._paths.hasOwnProperty(newPath) || shouldSkipPath(projection, newPath)) {
       delete obj[key];
       return;
     }

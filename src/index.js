@@ -18,7 +18,7 @@ class Archetype {
 
     class Type {
       constructor(obj, projection) {
-        Object.assign(this, unmarshal(cloneDeep(obj), _this, projection));
+        Object.assign(this, unmarshal(obj, _this, projection));
       }
 
       static paths() {

@@ -294,6 +294,24 @@ describe('unmarshal()', function() {
     });
   });
 
+  it('disallows __proto__, constructor', function() {
+    const Test = new Archetype({
+      test: { $type: 'string' }
+    }).compile();
+
+    let res = new Test(JSON.parse('{"__proto__":"foo","test":"bar"}'));
+    assert.deepEqual(res, {
+      test: 'bar'
+    });
+    assert.equal(res.__proto__, Test.prototype);
+
+    res = new Test(JSON.parse('{"constructor":"foo","test":"bar"}'));
+    assert.deepEqual(res, {
+      test: 'bar'
+    });
+    assert.equal(res.constructor, Test);
+  });
+
   it('required', function() {
     const Person = new Archetype({
       name: { $type: 'string', $required: true }
