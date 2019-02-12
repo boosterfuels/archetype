@@ -1,3 +1,19 @@
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/boosterfuels/archetype/compare/v0.8.8...v0.9.0) (2019-02-12)
+
+
+### Bug Fixes
+
+* ignore special properties ([7b99d33](https://github.com/boosterfuels/archetype/commit/7b99d33))
+* **to:** disallow casting POJOs to numbers ([5548fc2](https://github.com/boosterfuels/archetype/commit/5548fc2))
+
+
+### Features
+
+* make `compile()` return a full ES6 class for improved inheritance ([d3e873e](https://github.com/boosterfuels/archetype/commit/d3e873e)), closes [#9](https://github.com/boosterfuels/archetype/issues/9)
+
+
+
 <a name="0.8.8"></a>
 ## [0.8.8](https://github.com/boosterfuels/archetype/compare/v0.8.7...v0.8.8) (2019-01-30)
 
