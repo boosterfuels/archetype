@@ -1,5 +1,6 @@
 'use strict';
 
+const Path = require('./path');
 const cloneDeep = require('lodash.clonedeep');
 const get = require('./get');
 const set = require('lodash.set');
@@ -140,17 +141,17 @@ function visitor(obj) {
 }
 
 function visitArray(arr, path, paths) {
-  paths[path] = { $type: Array };
+  paths[path] = new Path({ $type: Array });
   if (arr.length > 0) {
     if (Array.isArray(arr[0])) {
       visitArray(arr[0], path + '.$', paths);
     } else if (typeof arr[0] === 'object') {
       visitObject(arr[0], path + '.$', paths);
     } else {
-      paths[path + '.$'] = { $type: arr[0] };
+      paths[path + '.$'] = new Path({ $type: arr[0] });
     }
   } else {
-    paths[path + '.$'] = { $type: null };
+    paths[path + '.$'] = new Path({ $type: null });
   }
   return paths[path];
 }
@@ -165,7 +166,7 @@ function visitObject(obj, path, paths) {
           clone[key] = obj[key];
           return clone;
         }, {});
-      Object.assign(paths[path], withoutType);
+      paths[path] = new Path(Object.assign(paths[path], withoutType));
       return;
     }
 
@@ -173,12 +174,12 @@ function visitObject(obj, path, paths) {
       throw new Error(`Path ${path} has nullish $type. Use Archetype.Any to skip casting`);
     }
 
-    paths[path] = obj;
+    paths[path] = new Path(obj);
     return;
   }
 
   if (path) {
-    paths[path] = { $type: Object, $schema: obj };
+    paths[path] = new Path({ $type: Object, $schema: obj });
   }
   Object.keys(obj).forEach(function(key) {
     const value = obj[key];
@@ -187,7 +188,7 @@ function visitObject(obj, path, paths) {
     } else if (typeof value === 'object') {
       visitObject(value, join(path, key), paths);
     } else {
-      paths[join(path, key)] = { $type: value };
+      paths[join(path, key)] = new Path({ $type: value });
     }
   });
 }

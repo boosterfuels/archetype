@@ -1,6 +1,7 @@
 'use strict';
 
 const Archetype = require('../');
+const Path = require('../src/path');
 const StandardError = require('standard-error');
 const assert = require('assert');
 const mongodb = require('mongodb');
@@ -45,6 +46,8 @@ describe('schema', function() {
       'arrNested.$': { $type: Array },
       'arrNested.$.$': { $type: 'number' }
     });
+
+    assert.ok(schema._paths['test'] instanceof Path);
   });
 
   it('handles nested document arrays', function() {
