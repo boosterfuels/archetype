@@ -6,6 +6,7 @@ const ValidateError = require('./error');
 const applyDefaults = require('../defaults');
 const checkRequired = require('../required');
 const cloneDeep = require('lodash.clonedeep');
+const getOwnProperty = require('../helpers/getOwnProperty');
 const handleCast = require('./util').handleCast;
 const inspect = require('util').inspect;
 const join = require('./util').join;
@@ -99,7 +100,7 @@ function visitArray(arr, schema, projection, path) {
 
   const pathOptions = schema._paths[newPath];
   arr.forEach(function(value, index) {
-    if (pathOptions.$transform != null) {
+    if (getOwnProperty(pathOptions, '$transform') != null) {
       try {
         arr[index] = pathOptions.$transform(arr[index]);
       } catch (err) {
@@ -168,7 +169,7 @@ function visitObject(obj, schema, projection, path) {
     }
     const newSchema = schema._paths[newPath];
     const pathOptions = schema._paths[newPath];
-    if (pathOptions.$transform != null) {
+    if (getOwnProperty(pathOptions, '$transform') != null) {
       try {
         obj[key] = pathOptions.$transform(obj[key]);
       } catch (err) {

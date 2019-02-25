@@ -3,6 +3,7 @@
 module.exports = applyDefaults;
 
 const get = require('./get');
+const getOwnProperty = require('./helpers/getOwnProperty');
 const join = require('./unmarshal/util').join;
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
@@ -33,7 +34,7 @@ function defaults(root, v, schema, path, projection) {
     return handleDefault(schemaPath.$default, root);
   }
 
-  if (schemaPath.$type === Object && schemaPath.$schema) {
+  if (schemaPath.$type === Object && getOwnProperty(schemaPath, '$schema') != null) {
     for (const key of Object.keys(schemaPath.$schema)) {
       const fullPath = join(fakePath, key);
       const value = get(v, key);
