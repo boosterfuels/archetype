@@ -1,4 +1,4 @@
 CHANGELOG.md
-circle.yml
+.circleci/
 package-lock.json
 test/
