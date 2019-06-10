@@ -1,6 +1,7 @@
 'use strict';
 
 const Path = require('./path');
+const Type = require('./type');
 const cloneDeep = require('lodash.clonedeep');
 const get = require('./get');
 const set = require('lodash.set');
@@ -17,11 +18,7 @@ class Archetype {
     const _this = this;
     this._paths = visitor(this._obj);
 
-    class Type {
-      constructor(obj, projection) {
-        Object.assign(this, unmarshal(cloneDeep(obj), _this, projection));
-      }
-
+    class _Type extends Type {
       static paths() {
         return _this.paths();
       }
@@ -47,13 +44,13 @@ class Archetype {
       }
     }
 
-    Type.schema = this;
+    _Type.schema = this;
     if (name != null) {
-      Type.toString = () => name;
-      Object.defineProperty(Type, 'name', { value: name });
+      _Type.toString = () => name;
+      Object.defineProperty(_Type, 'name', { value: name });
     }
 
-    return Type;
+    return _Type;
   }
 
   json() {
