@@ -1,3 +1,13 @@
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/boosterfuels/archetype/compare/v0.9.0...v0.9.1) (2019-06-10)
+
+
+### Bug Fixes
+
+* export core Type class ([3e1bdf2](https://github.com/boosterfuels/archetype/commit/3e1bdf2))
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/boosterfuels/archetype/compare/v0.8.8...v0.9.0) (2019-02-12)
 
