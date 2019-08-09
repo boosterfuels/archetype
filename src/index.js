@@ -2,7 +2,6 @@
 
 const Path = require('./path');
 const Type = require('./type');
-const cloneDeep = require('lodash.clonedeep');
 const get = require('./get');
 const set = require('lodash.set');
 const specialProperties = require('./specialProperties');
@@ -10,7 +9,7 @@ const unmarshal = require('./unmarshal');
 
 class Archetype {
   constructor(obj) {
-    this._obj = cloneDeep(obj);
+    this._obj = obj;
     this._paths = {};
   }
 

@@ -5,7 +5,6 @@ const StandardError = require('standard-error');
 const ValidateError = require('./error');
 const applyDefaults = require('../defaults');
 const checkRequired = require('../required');
-const cloneDeep = require('lodash.clonedeep');
 const getOwnProperty = require('../helpers/getOwnProperty');
 const handleCast = require('./util').handleCast;
 const inspect = require('util').inspect;
@@ -30,7 +29,6 @@ function handleProjection(projection) {
   if (!projection) {
     return { $inclusive: true };
   }
-  projection = cloneDeep(projection);
   projection.$hasExclusiveChild = {};
   let inclusive = null;
   for (const key of Object.keys(projection)) {

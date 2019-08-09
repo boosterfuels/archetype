@@ -458,10 +458,11 @@ describe('unmarshal()', function() {
       }
     }).compile();
 
-    const user = { name: { first: 'Axl', last: 'Rose' } };
-    const justFirst = new Person(user, { 'name.first': 1 });
+    const justFirst = new Person({ name: { first: 'Axl', last: 'Rose' } },
+      { 'name.first': 1 });
     assert.deepEqual(justFirst, { name: { first: 'Axl' } });
-    const justLast = new Person(user, { 'name.first': 0 });
+    const justLast = new Person({ name: { first: 'Axl', last: 'Rose' } },
+      { 'name.first': 0 });
     assert.deepEqual(justLast, { name: { last: 'Rose' } });
   });
 
