@@ -1,3 +1,13 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/boosterfuels/archetype/compare/v0.9.1...v0.10.0) (2019-08-09)
+
+
+### Performance Improvements
+
+* remove `cloneDeep()` to reduce memory usage for huge objects ([117c083](https://github.com/boosterfuels/archetype/commit/117c083))
+
+
+
 <a name="0.9.1"></a>
 ## [0.9.1](https://github.com/boosterfuels/archetype/compare/v0.9.0...v0.9.1) (2019-06-10)
 
