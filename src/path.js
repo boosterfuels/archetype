@@ -8,9 +8,9 @@ class Path {
       const $default = obj.$default;
       const numKeys = Array.isArray($default) ?
         $default.length :
-        Object.keys(obj).length;
+        Object.keys($default).length;
       if (numKeys > 0) {
-        throw new Error('Default is a non-empty object ' +
+        throw new Error('Default is a non-empty object `' +
           util.inspect($default) + '`. Please make `$default` a function ' +
           'that returns an object instead');
       }
