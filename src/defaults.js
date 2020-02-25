@@ -7,6 +7,7 @@ const getOwnProperty = require('./helpers/getOwnProperty');
 const join = require('./unmarshal/util').join;
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
+const util = require('util');
 
 function applyDefaults(obj, schema, projection) {
   const keys = Object.keys(schema._obj);
@@ -31,7 +32,7 @@ function defaults(root, v, schema, path, projection) {
   }
 
   if ('$default' in schemaPath) {
-    return handleDefault(schemaPath.$default, root);
+    return handleDefault(schemaPath.$default, root, path);
   }
 
   if (schemaPath.$type === Object && getOwnProperty(schemaPath, '$schema') != null) {
@@ -65,9 +66,22 @@ function defaults(root, v, schema, path, projection) {
   }
 }
 
-function handleDefault(obj, ctx) {
+function handleDefault(obj, ctx, path) {
   if (typeof obj === 'function') {
     return obj(ctx);
+  }
+  // If default is an object type, be very careful -
+  // returning an object default would be by reference,
+  // which means user data could modify the default.
+  if (typeof obj === 'object' && obj != null) {
+    if (Array.isArray(obj) && obj.length === 0) {
+      return [];
+    } else if (!Array.isArray(obj) && Object.keys(obj).length === 0) {
+      return {};
+    }
+    throw new Error('Default at path `' + path + '` is a non-empty ' +
+      'object `' + util.inspect(obj) + '`. Please make `$default` ' +
+      'a function that returns an object instead');
   }
   return obj;
 }

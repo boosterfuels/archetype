@@ -58,4 +58,49 @@ describe('defaults', function() {
     assert.equal(v.multiple.a, 'test');
     assert.equal(v.multiple.b, 'foo');
   });
+
+  it('clones empty default array and object', function() {
+    const T = new Archetype({
+      myArr: {
+        $type: ['string'],
+        $default: []
+      },
+      myObj: {
+        $type: Object,
+        $default: {}
+      }
+    }).compile('T');
+
+    const obj1 = new T({});
+
+    obj1.myArr.push('test');
+    obj1.myObj.hello = 'world';
+
+    assert.equal(obj1.myArr[0], 'test');
+    assert.equal(obj1.myObj.hello, 'world');
+
+    const obj2 = new T({});
+    assert.deepEqual(obj2.myArr, []);
+    assert.deepEqual(obj2.myObj, {});
+  });
+
+  it('throws if default is non-empty object', function() {
+    assert.throws(() => {
+      new Archetype({
+        myArr: {
+          $type: ['string'],
+          $default: ['test']
+        }
+      }).compile('T');
+    }, /Default is a non-empty object/);
+
+    assert.throws(() => {
+      new Archetype({
+        myArr: {
+          $type: {},
+          $default: { test: 42 }
+        }
+      }).compile('T');
+    }, /Default is a non-empty object/);
+  });
 });
