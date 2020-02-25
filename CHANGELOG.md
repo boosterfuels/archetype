@@ -1,3 +1,13 @@
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/boosterfuels/archetype/compare/v0.10.0...v0.10.2) (2020-02-25)
+
+
+### Bug Fixes
+
+* clone empty arrays / objects if set as `$default`, throw if not an empty object ([312aa14](https://github.com/boosterfuels/archetype/commit/312aa14))
+
+
+
 <a name="0.10.1"></a>
 ## [0.10.1](https://github.com/boosterfuels/archetype/compare/v0.10.0...v0.10.1) (2020-02-25)
 
