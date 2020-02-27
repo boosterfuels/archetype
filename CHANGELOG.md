@@ -1,3 +1,13 @@
+<a name="0.11.1"></a>
+## [0.11.1](https://github.com/boosterfuels/archetype/compare/v0.11.0...v0.11.1) (2020-02-27)
+
+
+### Bug Fixes
+
+* throw non-empty object $default error if passing in a date or other non-POJO ([76e7bfa](https://github.com/boosterfuels/archetype/commit/76e7bfa))
+
+
+
 <a name="0.11.0"></a>
 # [0.11.0](https://github.com/boosterfuels/archetype/compare/v0.10.2...v0.11.0) (2020-02-27)
 
