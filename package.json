@@ -3,6 +3,7 @@
   "version": "0.10.2",
   "author": "Valeri Karpov <val@boosterfuels.com>",
   "dependencies": {
+    "lodash.clonedeep": "4.x",
     "lodash.set": "4.x",
     "mpath": "0.5.1",
     "standard-error": "1.1.0"

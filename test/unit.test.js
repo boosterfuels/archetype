@@ -745,6 +745,19 @@ describe('unmarshal()', function() {
       arr: [{ el: '2' }]
     });
   });
+
+  it('can optionally skip cloning', function() {
+    const Test = new Archetype({
+      name: 'string'
+    }).compile('Test');
+
+    const obj = { name: 'test', otherProp: 'foo' };
+    new Test(obj);
+    assert.equal(obj.otherProp, 'foo');
+
+    new Test(obj, null, { clone: false });
+    assert.strictEqual(obj.otherProp, void 0);
+  });
 });
 
 describe('schema modifications', function() {
