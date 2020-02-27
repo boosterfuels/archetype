@@ -76,7 +76,9 @@ function handleDefault(obj, ctx, path) {
   if (typeof obj === 'object' && obj != null) {
     if (Array.isArray(obj) && obj.length === 0) {
       return [];
-    } else if (!Array.isArray(obj) && Object.keys(obj).length === 0) {
+    } else if (!Array.isArray(obj) &&
+      Object.keys(obj).length === 0 &&
+      [void 0, Object].indexOf(obj.constructor) !== -1) {
       return {};
     }
     throw new Error('Default at path `' + path + '` is a non-empty ' +

@@ -760,6 +760,17 @@ describe('unmarshal()', function() {
     assert.strictEqual(casted.otherProp, void 0);
     assert.strictEqual(obj.otherProp, void 0);
   });
+
+  it('throws if $default is a date', function() {
+    assert.throws(() => {
+      const Test = new Archetype({
+        name: {
+          $type: Date,
+          $default: new Date()
+        }
+      }).compile('Test');
+    }, /non-empty object/);
+  });
 });
 
 describe('schema modifications', function() {

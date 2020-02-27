@@ -9,7 +9,10 @@ class Path {
       const numKeys = Array.isArray($default) ?
         $default.length :
         Object.keys($default).length;
-      if (numKeys > 0) {
+      const isInvalidType = Array.isArray($default) ?
+        false :
+        [void 0, Object].indexOf($default.constructor) === -1;
+      if (numKeys > 0 || isInvalidType) {
         throw new Error('Default is a non-empty object `' +
           util.inspect($default) + '`. Please make `$default` a function ' +
           'that returns an object instead');
