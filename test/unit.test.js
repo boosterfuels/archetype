@@ -755,7 +755,9 @@ describe('unmarshal()', function() {
     new Test(obj);
     assert.equal(obj.otherProp, 'foo');
 
-    new Test(obj, null, { clone: false });
+    const casted = new Test(obj, null, { clone: false });
+    assert.equal(casted.name, 'test');
+    assert.strictEqual(casted.otherProp, void 0);
     assert.strictEqual(obj.otherProp, void 0);
   });
 });
