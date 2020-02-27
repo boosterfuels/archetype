@@ -1,3 +1,13 @@
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/boosterfuels/archetype/compare/v0.10.2...v0.11.0) (2020-02-27)
+
+
+### Features
+
+* make `new Type()` clone by default, but allow passing in an option to disable cloning for perf ([3638b57](https://github.com/boosterfuels/archetype/commit/3638b57))
+
+
+
 <a name="0.10.2"></a>
 ## [0.10.2](https://github.com/boosterfuels/archetype/compare/v0.10.0...v0.10.2) (2020-02-25)
 
