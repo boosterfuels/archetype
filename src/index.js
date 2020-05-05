@@ -86,7 +86,7 @@ class Archetype {
     const obj = {};
     paths = Array.isArray(paths) ? paths : [paths];
     for (const path of paths) {
-      obj[path] = this._obj[paths];
+      obj[path] = this._obj[path];
     }
     const newSchema = new Archetype(obj);
     return newSchema;
