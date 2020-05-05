@@ -859,6 +859,34 @@ describe('schema modifications', function() {
     new Test2({ nested: { str: '123' } });
   });
 
+  it('pick() and transform() create a new schema with a subset of paths with altered props', function() {
+    const Test = new Archetype({
+      str: 'string',
+      num: 'number',
+      didRun: {
+        $type : 'boolean',
+        $required: true,
+        $default: false
+      }
+    }).compile();
+
+    const Test2 = Test
+      .pick(['num', 'didRun'])
+      .transform((path, props) => {
+        assert.ok(props, 'transform() props should be present.')
+        if (path === 'didRun') {
+          delete props.$required;
+          delete props.$default;
+        }
+        return props;
+      })
+      .compile('Test2');
+
+    assert.deepEqual(new Test2({ str: 123, num: '123' }), {
+      num: 123
+    });
+  });
+
   it('eachPath() loops over nested paths', function () {
     const Test = new Archetype({
       nested: {
