@@ -36,7 +36,7 @@ If casting fails, archetype throws a nice clean exception:
 
 ```javascript
 try {
-  Person({ // <-- calling with `new` is optional
+  new Person({
     name: 'test',
     bandId: 'ImNotAValidObjectId'
   });
