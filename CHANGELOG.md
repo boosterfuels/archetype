@@ -1,3 +1,13 @@
+<a name="0.11.3"></a>
+## [0.11.3](https://github.com/boosterfuels/archetype/compare/v0.11.2...v0.11.3) (2020-05-18)
+
+
+### Bug Fixes
+
+* **import:** Remove unused import of index.js in src/unmarshal/index.js ([71eac99](https://github.com/boosterfuels/archetype/commit/71eac99))
+
+
+
 <a name="0.11.1"></a>
 ## [0.11.1](https://github.com/boosterfuels/archetype/compare/v0.11.0...v0.11.1) (2020-02-27)
 
