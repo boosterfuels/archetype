@@ -1,6 +1,5 @@
 'use strict';
 
-const Schema = require('../').Schema;
 const StandardError = require('standard-error');
 const ValidateError = require('./error');
 const applyDefaults = require('../defaults');
