@@ -10,8 +10,8 @@
   },
   "devDependencies": {
     "acquit": "1.x",
-    "acquit-ignore": "0.1.0",
-    "acquit-markdown": "0.1.0",
+    "acquit-ignore": "0.1.x",
+    "acquit-markdown": "0.1.x",
     "co": "4.6.0",
     "mocha": "5.x",
     "mongodb": "~3.0",
