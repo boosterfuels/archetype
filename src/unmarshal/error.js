@@ -9,7 +9,7 @@ class CastError extends Error {
   }
 
   markError(path, error) {
-    const standardized = new Error(error.message);
+    const standardized = new ValidatorError(error.message);
     standardized.stack = error.stack;
     this.errors[path] = standardized;
     this.hasError = true;
@@ -35,6 +35,12 @@ class CastError extends Error {
       str.push(`${key}: ${this.errors[key].message || value}`);
     }
     return str.join(', ');
+  }
+}
+
+class ValidatorError extends Error {
+  toJSON() {
+    return { message: this.message };
   }
 }
 

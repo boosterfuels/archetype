@@ -241,12 +241,12 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: "Error: Could not cast 'Axl Rose' to Object"
+        name: new Error("Could not cast 'Axl Rose' to Object")
       });
 
       const stringified = JSON.parse(JSON.stringify(error));
       assert.deepEqual(stringified.errors, {
-        name: "Error: Could not cast 'Axl Rose' to Object"
+        name: { message: "Could not cast 'Axl Rose' to Object" }
       });
     }
     assert.ok(errored);
@@ -278,7 +278,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.0': "Error: Could not cast 'Axl Rose' to Object"
+        'names.0': new Error("Could not cast 'Axl Rose' to Object")
       });
     }
     assert.ok(errored);
@@ -325,7 +325,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Error: Path "name" is required'
+        name: new Error('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -336,7 +336,12 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Error: Path "name" is required'
+        name: new Error('Path "name" is required')
+      });
+
+      console.log(JSON.stringify(error, null, '  '))
+      assert.deepEqual(JSON.parse(JSON.stringify(error)).errors, {
+        name: { message: 'Path "name" is required' }
       });
     }
     assert.ok(errored);
@@ -355,7 +360,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Error: Path "name" is required'
+        name: new Error('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -401,7 +406,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Error: Path "name" is required'
+        name: new Error('Path "name" is required')
       });
     }
     assert.ok(errored);
@@ -421,7 +426,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.1': 'Error: Path "names.1" is required'
+        'names.1': new Error('Path "names.1" is required')
       });
     }
     assert.ok(errored);
