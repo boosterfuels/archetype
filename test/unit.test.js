@@ -241,12 +241,12 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: "Could not cast 'Axl Rose' to Object"
+        name: "Error: Could not cast 'Axl Rose' to Object"
       });
 
       const stringified = JSON.parse(JSON.stringify(error));
       assert.deepEqual(stringified.errors, {
-        name: "Could not cast 'Axl Rose' to Object"
+        name: "Error: Could not cast 'Axl Rose' to Object"
       });
     }
     assert.ok(errored);
@@ -278,7 +278,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.0': "Could not cast 'Axl Rose' to Object"
+        'names.0': "Error: Could not cast 'Axl Rose' to Object"
       });
     }
     assert.ok(errored);
@@ -325,7 +325,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Path "name" is required'
+        name: 'Error: Path "name" is required'
       });
     }
     assert.ok(errored);
@@ -336,7 +336,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Path "name" is required'
+        name: 'Error: Path "name" is required'
       });
     }
     assert.ok(errored);
@@ -355,7 +355,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Path "name" is required'
+        name: 'Error: Path "name" is required'
       });
     }
     assert.ok(errored);
@@ -401,7 +401,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        name: 'Path "name" is required'
+        name: 'Error: Path "name" is required'
       });
     }
     assert.ok(errored);
@@ -421,7 +421,7 @@ describe('unmarshal()', function() {
     } catch(error) {
       errored = true;
       assert.deepEqual(error.errors, {
-        'names.1': 'Path "names.1" is required'
+        'names.1': 'Error: Path "names.1" is required'
       });
     }
     assert.ok(errored);
