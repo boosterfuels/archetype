@@ -1,7 +1,5 @@
 'use strict';
 
-const StandardError = require('standard-error');
-
 class CastError extends Error {
   constructor() {
     super();
@@ -11,7 +9,7 @@ class CastError extends Error {
   }
 
   markError(path, error) {
-    const standardized = new StandardError(error.message);
+    const standardized = new Error(error.message);
     standardized.stack = error.stack;
     this.errors[path] = standardized;
     this.hasError = true;
