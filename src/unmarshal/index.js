@@ -1,6 +1,5 @@
 'use strict';
 
-const StandardError = require('standard-error');
 const ValidateError = require('./error');
 const applyDefaults = require('../defaults');
 const checkRequired = require('../required');
