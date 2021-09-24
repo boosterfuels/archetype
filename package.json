@@ -5,7 +5,7 @@
   "dependencies": {
     "lodash.clonedeep": "4.x",
     "lodash.set": "4.x",
-    "mpath": "0.5.1"
+    "mpath": "0.8.x"
   },
   "devDependencies": {
     "acquit": "1.x",
