@@ -2,9 +2,9 @@
 
 const Path = require('./path');
 const Type = require('./type');
-const cloneDeep = require('lodash.clonedeep');
+const { cloneDeep } = require('lodash');
 const get = require('./get');
-const set = require('lodash.set');
+const { set } = require('lodash');
 const specialProperties = require('./specialProperties');
 const unmarshal = require('./unmarshal');
 

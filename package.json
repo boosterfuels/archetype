@@ -1,10 +1,9 @@
 {
   "name": "archetype",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "author": "Valeri Karpov <val@boosterfuels.com>",
   "dependencies": {
-    "lodash.clonedeep": "4.x",
-    "lodash.set": "4.x",
+    "lodash": "4.x",
     "mpath": "0.8.x"
   },
   "devDependencies": {
