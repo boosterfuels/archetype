@@ -1,6 +1,6 @@
 'use strict';
 
-const cloneDeep = require('lodash.clonedeep');
+const { cloneDeep } = require('lodash');
 const unmarshal = require('./unmarshal');
 
 class Type {
