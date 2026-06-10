@@ -61,18 +61,32 @@ function castDocument(obj, schema, projection) {
     throw new Error(`Can't cast null or undefined`);
   }
   applyDefaults(obj, schema, projection);
-  const error = new ValidateError();
-  error.merge(visitObject(obj, schema, projection, '').error);
-  error.merge(checkRequired(obj, schema, projection));
-  error.merge(runValidation(obj, schema, projection));
-  if (error.hasError) {
+  let error = visitObject(obj, schema, projection, '').error;
+  error = mergeErrors(error, checkRequired(obj, schema, projection));
+  error = mergeErrors(error, runValidation(obj, schema, projection));
+  if (error != null) {
     throw error;
   }
   return obj;
 }
 
+// ValidateError accumulators are allocated lazily — only once a path actually
+// fails — so casting a clean document allocates zero Error objects and pays
+// zero V8 stack captures. On hot paths (e.g. validating every request payload)
+// the eager per-visit `new ValidateError()` dominated casting cost.
+function addError(error, path, err) {
+  return (error == null ? new ValidateError() : error).markError(path, err);
+}
+
+function mergeErrors(into, from) {
+  if (from == null) {
+    return into;
+  }
+  return into == null ? from : into.merge(from);
+}
+
 function visitArray(arr, schema, projection, path) {
-  let error = new ValidateError();
+  let error = null;
   let curPath = realPathToSchemaPath(path);
   let newPath = join(curPath, '$');
 
@@ -100,7 +114,7 @@ function visitArray(arr, schema, projection, path) {
       try {
         arr[index] = pathOptions.$transform(arr[index]);
       } catch (err) {
-        error.markError(`newPath.${index}`, err);
+        error = addError(error, `newPath.${index}`, err);
         return;
       }
       value = arr[index];
@@ -109,14 +123,14 @@ function visitArray(arr, schema, projection, path) {
         Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, join(path, index, true));
       if (res.error) {
-        error.merge(res.error);
+        error = mergeErrors(error, res.error);
       }
       arr[index] = res.value;
       return;
     } else if (pathOptions.$type === Object) {
       let res = visitObject(value, schema, projection, join(path, index, true));
       if (res.error) {
-        error.merge(res.error);
+        error = mergeErrors(error, res.error);
       }
       arr[index] = res.value;
       return;
@@ -125,25 +139,24 @@ function visitArray(arr, schema, projection, path) {
     try {
       handleCast(arr, index, pathOptions.$type);
     } catch(err) {
-      error.markError(join(path, index, true), err);
+      error = addError(error, join(path, index, true), err);
     }
   });
 
   return {
     value: arr,
-    error: (error.hasError ? error : null)
+    error: error
   };
 }
 
 function visitObject(obj, schema, projection, path) {
-  let error = new ValidateError();
+  let error = null;
   if (typeof obj !== 'object' || Array.isArray(obj)) {
     let err = new Error('Could not cast ' + require('util').inspect(obj) +
       ' to Object');
-    error.markError(path, err);
     return {
       value: null,
-      error: error
+      error: addError(error, path, err)
     };
   }
 
@@ -152,7 +165,7 @@ function visitObject(obj, schema, projection, path) {
   if (fakePath && !curSchema.$schema) {
     return {
       value: obj,
-      error: (error.hasError ? error : null)
+      error: error
     };
   }
 
@@ -169,7 +182,7 @@ function visitObject(obj, schema, projection, path) {
       try {
         obj[key] = pathOptions.$transform(obj[key]);
       } catch (err) {
-        error.markError(newPath, err);
+        error = addError(error, newPath, err);
         return;
       }
       value = obj[key];
@@ -183,7 +196,7 @@ function visitObject(obj, schema, projection, path) {
         Array.isArray(schema._paths[newPath].$type)) {
       let res = visitArray(value, schema, projection, newPath);
       if (res.error) {
-        error.merge(res.error);
+        error = mergeErrors(error, res.error);
       }
       obj[key] = res.value;
       return;
@@ -194,7 +207,7 @@ function visitObject(obj, schema, projection, path) {
       }
       let res = visitObject(value, schema, projection, newPath);
       if (res.error) {
-        error.merge(res.error);
+        error = mergeErrors(error, res.error);
       }
       obj[key] = res.value;
       return;
@@ -203,18 +216,18 @@ function visitObject(obj, schema, projection, path) {
     try {
       handleCast(obj, key, pathOptions.$type, pathOptions.$transform);
     } catch(err) {
-      error.markError(join(path, key, true), err);
+      error = addError(error, join(path, key, true), err);
     }
   });
 
   return {
     value: obj,
-    error: (error.hasError ? error : null)
+    error: error
   };
 }
 
 function runValidation(obj, schema, projection) {
-  const error = new ValidateError();
+  let error = null;
   for (const path of Object.keys(schema._paths)) {
     if (shouldSkipPath(projection, path)) {
       continue;
@@ -236,13 +249,13 @@ function runValidation(obj, schema, projection) {
           if (schema._paths[path].$enum.indexOf(val) === -1) {
             const msg = `Value "${val}" invalid, allowed values are ` +
               `"${inspect(schema._paths[path].$enum)}"`;
-            error.markError([path, index].join('.'), new Error(msg));
+            error = addError(error, [path, index].join('.'), new Error(msg));
           }
         });
       } else if (schema._paths[path].$enum.indexOf(val) === -1) {
         const msg = `Value "${val}" invalid, allowed values are ` +
           `"${inspect(schema._paths[path].$enum)}"`;
-        error.markError(path, new Error(msg));
+        error = addError(error, path, new Error(msg));
         continue;
       }
     }
@@ -253,14 +266,14 @@ function runValidation(obj, schema, projection) {
           try {
             schema._paths[path].$validate(val, schema._paths[path], obj);
           } catch(_error) {
-            error.markError(path, _error);
+            error = addError(error, path, _error);
           }
         } else {
           val.forEach((val, index) => {
             try {
               schema._paths[path].$validate(val, schema._paths[path], obj);
             } catch(_error) {
-              error.markError(`${path}.${index}`, _error);
+              error = addError(error, `${path}.${index}`, _error);
             }
           });
         }
@@ -268,7 +281,7 @@ function runValidation(obj, schema, projection) {
         try {
           schema._paths[path].$validate(val, schema._paths[path], obj);
         } catch(_error) {
-          error.markError(path, _error);
+          error = addError(error, path, _error);
         }
       }
     }

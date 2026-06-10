@@ -8,7 +8,7 @@ const join = require('./unmarshal/util').join;
 const realPathToSchemaPath = require('./unmarshal/util').realPathToSchemaPath;
 const shouldSkipPath = require('./util').shouldSkipPath;
 
-function check(root, v, schema, path, error, projection) {
+function check(root, v, schema, path, state, projection) {
   if (shouldSkipPath(projection, path) || projection.$noRequired) {
     return;
   }
@@ -16,23 +16,27 @@ function check(root, v, schema, path, error, projection) {
   const fakePath = realPathToSchemaPath(path);
   const schemaPath = schema._paths[fakePath];
   if (isRequired(root, schemaPath) && v == null) {
-    return error.markError(path, new Error(`Path "${path}" is required`));
+    // Lazily allocate the accumulator so checking a document with no missing
+    // required paths allocates zero Error objects (see unmarshal/index.js).
+    state.error = (state.error == null ? new ValidateError() : state.error).
+      markError(path, new Error(`Path "${path}" is required`));
+    return;
   }
 
   if (!path) {
     for (const key of Object.keys(schema._obj)) {
-      check(root, v[key], schema, join(fakePath, key), error, projection);
+      check(root, v[key], schema, join(fakePath, key), state, projection);
     }
   } else if (schemaPath) {
     if (schemaPath.$type === Object && schemaPath.$schema) {
       for (const key of Object.keys(schemaPath.$schema)) {
-        check(root, get(v, key), schema, join(fakePath, key), error, projection);
+        check(root, get(v, key), schema, join(fakePath, key), state, projection);
       }
     } else if (schemaPath.$type === Array) {
       const arr = v || [];
       for (let index = 0; index < arr.length; ++index) {
         check(root, arr[index], schema, join(fakePath, index.toString()),
-          error, projection);
+          state, projection);
       }
     }
   }
@@ -49,7 +53,7 @@ function isRequired(root, schemaPath) {
 }
 
 function checkRequired(obj, schema, projection) {
-  const error = new ValidateError();
-  check(obj, obj, schema, '', error, projection);
-  return error;
+  const state = { error: null };
+  check(obj, obj, schema, '', state, projection);
+  return state.error;
 }
